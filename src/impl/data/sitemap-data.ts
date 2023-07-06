@@ -50,9 +50,7 @@ export const sitemapData = async (
     return left([l.left]);
   } else {
     const pagesByTagId = homePagesByTagId(ctx, l.right, hp);
-
     pagesByTagId.warnings && warnings.push(...pagesByTagId.warnings);
-    ct.warnings && warnings.push(...ct.warnings);
     return right({
       data: {
         ...l.right,

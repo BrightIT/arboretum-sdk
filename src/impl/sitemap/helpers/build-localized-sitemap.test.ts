@@ -43,6 +43,7 @@ const contentTypes = new Map([
             id: pageContentTypeSlugFieldId,
             localized: true,
             name: 'Slug',
+            type: "Symbol"
           },
         ],
         [
@@ -51,6 +52,7 @@ const contentTypes = new Map([
             id: pageContentTypeChildPagesFieldId,
             localized: true,
             name: 'Child Pages',
+            type: "Array"
           },
         ],
       ]),
@@ -67,6 +69,7 @@ const contentTypes = new Map([
             id: redirectContentTypePage,
             localized: true,
             name: 'Page',
+            type: "Link"
           },
         ],
         [
@@ -75,6 +78,7 @@ const contentTypes = new Map([
             id: redirectContentTypePath,
             localized: true,
             name: 'Path',
+            type: "Symbol"
           },
         ],
         [
@@ -83,6 +87,7 @@ const contentTypes = new Map([
             id: redirectContentTypeType,
             localized: true,
             name: 'Type',
+            type: "Symbol"
           },
         ],
       ]),

@@ -1,43 +1,51 @@
-import { ContentTypeT } from '../../../clients/contentful-client/contentful-client';
+import { ContentTypeT } from "../../../clients/contentful-client/contentful-client";
 import {
   validatePageContentType,
   validateRedirectContentType,
-} from './validate-content-types';
+} from "./validate-content-types";
 
 describe(validatePageContentType, () => {
-  const basicSlugFieldId = 'slug';
+  const basicSlugFieldId = "slug";
   const basicPageContentType: ContentTypeT = {
-    sys: { id: 'page' },
-    fields: [{ id: basicSlugFieldId, localized: false, name: 'Slug' }],
+    sys: { id: "page" },
+    fields: [
+      { id: basicSlugFieldId, localized: false, name: "Slug", type: "Symbol" },
+    ],
   };
   const basicPageContentTypeConfig = {
     id: basicPageContentType.sys.id,
-    slugFieldId: 'slug',
+    slugFieldId: "slug",
   };
 
-  test('Validate invalid content type configuration', () => {
+  test("Validate invalid content type configuration", () => {
     const invalidConfig1 = {
       ...basicPageContentTypeConfig,
-      slugFieldId: 'invalidSlugId',
+      slugFieldId: "invalidSlugId",
     };
     expect(
-      validatePageContentType(invalidConfig1)(basicPageContentType)._tag,
-    ).toBe('Left');
+      validatePageContentType(invalidConfig1)(basicPageContentType)._tag
+    ).toBe("Left");
   });
-  test('Validate content type configuration', () => {
+  test("Validate content type configuration", () => {
     expect(
       validatePageContentType(basicPageContentTypeConfig)(basicPageContentType)
-        ._tag,
-    ).toBe('Right');
+        ._tag
+    ).toBe("Right");
 
-    const titleFieldId = 'title';
-    const childPagesFieldId = 'title';
+    const titleFieldId = "title";
+    const childPagesFieldId = "childPages";
     const pageContentTypeWithOptionalFields: ContentTypeT = {
       ...basicPageContentType,
       fields: [
         ...basicPageContentType.fields,
-        { id: titleFieldId, localized: false, name: 'Title' },
-        { id: childPagesFieldId, localized: false, name: 'Child pages' },
+        { id: titleFieldId, localized: false, name: "Title", type: "Symbol" },
+        {
+          id: childPagesFieldId,
+          localized: false,
+          name: "Child pages",
+          type: "Array",
+          items: { linkType: "Entry", type: "Link" },
+        },
       ],
     };
 
@@ -49,22 +57,22 @@ describe(validatePageContentType, () => {
 
     expect(
       validatePageContentType(pageContentTypeConfigWithOptionalFields)(
-        pageContentTypeWithOptionalFields,
-      )._tag,
-    ).toBe('Right');
+        pageContentTypeWithOptionalFields
+      )._tag
+    ).toBe("Right");
   });
 });
 
 describe(validateRedirectContentType, () => {
-  const pageFieldId = 'page';
-  const pathFieldId = 'path';
-  const typeFieldId = 'type';
+  const pageFieldId = "page";
+  const pathFieldId = "path";
+  const typeFieldId = "type";
   const basicRedirectContentType: ContentTypeT = {
-    sys: { id: 'redirect' },
+    sys: { id: "redirect" },
     fields: [
-      { id: pageFieldId, localized: false, name: 'Page' },
-      { id: pathFieldId, localized: false, name: 'Path' },
-      { id: typeFieldId, localized: false, name: 'Type' },
+      { id: pageFieldId, localized: false, name: "Page", type: "Link" },
+      { id: pathFieldId, localized: false, name: "Path", type: "Symbol" },
+      { id: typeFieldId, localized: false, name: "Type", type: "Symbol" },
     ],
   };
   const basicRedirectContentTypeConfig = {
@@ -73,29 +81,28 @@ describe(validateRedirectContentType, () => {
     typeFieldId,
   };
 
-  test('Validate invalid content type configuration', () => {
+  test("Validate invalid content type configuration", () => {
     const invalidConfig1 = {
       ...basicRedirectContentTypeConfig,
-      pathFieldId: 'invalidPathId',
+      pathFieldId: "invalidPathId",
     };
     expect(
-      validateRedirectContentType(invalidConfig1)(basicRedirectContentType)
-        ._tag,
-    ).toBe('Left');
+      validateRedirectContentType(invalidConfig1)(basicRedirectContentType)._tag
+    ).toBe("Left");
   });
-  test('Validate content type configuration', () => {
+  test("Validate content type configuration", () => {
     expect(
       validateRedirectContentType(basicRedirectContentTypeConfig)(
-        basicRedirectContentType,
-      )._tag,
-    ).toBe('Right');
+        basicRedirectContentType
+      )._tag
+    ).toBe("Right");
 
-    const titleFieldId = 'title';
+    const titleFieldId = "title";
     const redirectContentTypeWithOptionalFields: ContentTypeT = {
       ...basicRedirectContentType,
       fields: [
         ...basicRedirectContentType.fields,
-        { id: titleFieldId, localized: false, name: 'Title' },
+        { id: titleFieldId, localized: false, name: "Title", type: "Symbol" },
       ],
     };
 
@@ -106,8 +113,8 @@ describe(validateRedirectContentType, () => {
 
     expect(
       validateRedirectContentType(redirectContentTypeConfigWithOptionalFields)(
-        redirectContentTypeWithOptionalFields,
-      )._tag,
-    ).toBe('Right');
+        redirectContentTypeWithOptionalFields
+      )._tag
+    ).toBe("Right");
   });
 });

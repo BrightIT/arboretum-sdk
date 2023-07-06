@@ -60,7 +60,7 @@ export type LocaleT = Pick<
 
 export type ContentTypeT = {
   sys: { id: string };
-  fields: Array<{ id: string; name: string; localized: boolean }>;
+  fields: Array<{ id: string; name: string; localized: boolean, type: string, linkType?: string, items?: { type?: string, linkType?: string} }>;
 };
 
 export type ContentfulClientT = {
