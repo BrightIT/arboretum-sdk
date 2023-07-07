@@ -5,7 +5,7 @@
   "description": "The sitemap for contentful",
   "dependencies": {
     "contentful": "^9.2.5",
-    "contentful-management": "^10.27.3"
+    "contentful-management": "10.29.1"
   },
   "sideEffects": false,
   "devDependencies": {
