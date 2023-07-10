@@ -22,7 +22,7 @@ const getAllRedirects = (
   >,
   options: NonNullable<ArboretumClientCtx['options']['redirectContentType']>,
   locale: LocaleT,
-  parent: RedirectT['parent'],
+  parent: Pick<PageT, "sys" | "path">,
 ): Array<RedirectT> => {
   const redirectContentType = options.id
     ? data.contentTypes.get(options.id)
@@ -113,9 +113,7 @@ const buildLocalizedSitemapArrRecursively = (
 
     const redirectChildPages =
       isRoot(page) && options.redirectContentType
-        ? getAllRedirects(data, options.redirectContentType, locale, {
-            sys: { id: page.sys.id },
-          })
+        ? getAllRedirects(data, options.redirectContentType, locale, page)
         : [];
 
     redirectChildPages.forEach(r => {

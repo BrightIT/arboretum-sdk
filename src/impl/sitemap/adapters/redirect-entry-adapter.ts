@@ -1,4 +1,4 @@
-import { RedirectT } from "../../arboretum-client.impl";
+import { PageT, RedirectT } from "../../arboretum-client.impl";
 import {
   ContentTypeT,
   EntryT,
@@ -13,7 +13,7 @@ export const redirectEntryAdapter = (
   pathField: ContentTypeT["fields"][number],
   typeField: ContentTypeT["fields"][number],
   titleField: ContentTypeT["fields"][number] | undefined,
-  parent: RedirectT["parent"],
+  parent: Pick<PageT, "sys" | "path">,
   locale: LocaleT,
   entry: EntryT
 ): RedirectT | undefined => {
@@ -39,11 +39,11 @@ export const redirectEntryAdapter = (
   return pageSysId && path && (type === "redirect" || type === "alias")
     ? {
         page: { sys: { id: pageSysId } },
-        path: "/" + locale.code + path,
+        path: parent.path + path,
         title: title || undefined,
         metadata: entry.metadata,
         type,
-        parent,
+        parent: { sys: { id: parent.sys.id } },
         sys: {
           id: entry.sys.id,
           cmaOnlyStatus: entry.sys.cmaOnlyStatus,
