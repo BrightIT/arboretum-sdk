@@ -8,13 +8,20 @@ import {
   ArboretumAliasT,
   ArboretumPageT,
   ArboretumRedirectT,
-} from './arboretum-client';
+  OptionsT,
+  ArboretumClientOptions,
+  ArboretumClientContentfulConfigOptionsT,
+  ArboretumClientOptionsT,
+} from "./arboretum-client";
 import {
   createArboretumClient,
   createArboretumClientFromCma,
   createArboretumClientFromCdaClient,
   createArboretumClientFromCdaParams,
-} from './impl/arboretum-client.impl';
+  CachedDataT,
+} from "./impl/arboretum-client.impl";
+import { Either, EitherL, EitherR } from "./utils/fp-utils";
+import { LocaleT } from "./clients/contentful-client/contentful-client";
 
 export {
   createArboretumClient,
@@ -22,6 +29,7 @@ export {
   createArboretumClientFromCdaClient,
   createArboretumClientFromCdaParams,
 };
+
 export type {
   ArboretumClientT,
   ArboretumClientConfigT,
@@ -32,4 +40,13 @@ export type {
   ArboretumAliasT,
   ArboretumPageT,
   ArboretumRedirectT,
+  CachedDataT,
+  Either,
+  EitherL,
+  EitherR,
+  OptionsT,
+  ArboretumClientOptions,
+  ArboretumClientContentfulConfigOptionsT,
+  ArboretumClientOptionsT,
+  LocaleT,
 };

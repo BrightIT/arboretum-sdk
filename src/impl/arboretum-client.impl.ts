@@ -6,28 +6,29 @@ import {
   ArboretumClientConfigT,
   ArboretumClientT,
   ArboretumClientOptions,
-} from '../arboretum-client';
+  ArboretumClientOptionsT,
+} from "../arboretum-client";
 import {
   ContentfulClientT,
   StatusT,
-} from '../clients/contentful-client/contentful-client';
-import { createContentfulClient } from '../clients/contentful-client/impl/contentful-client-impl';
-import { sitemapData, SitemapDataT } from './data/sitemap-data';
-import { pageById } from './sitemap/methods/page-by-id';
-import { pageByPath } from './sitemap/methods/page-by-path';
-import { pagesByTagId } from './sitemap/methods/pages-by-tag-id';
-import { pagesByIds } from './sitemap/methods/pages-by-ids';
-import { pagesByPaths } from './sitemap/methods/pages-by-paths';
-import { regenerate } from './sitemap/methods/regenerate';
-import { search } from './sitemap/methods/search';
-import { status } from './sitemap/methods/status';
-import { Either, right } from '../utils/fp-utils';
-import { pages } from './sitemap/methods/pages';
-import { buildSitemapEagerly } from './sitemap/helpers/build-sitemap-eagerly';
-import { cachedData } from './sitemap/methods/cached-data';
-import { buildPagesByTagEagerly } from './sitemap/helpers/build-pages-by-tag-eagerly';
+} from "../clients/contentful-client/contentful-client";
+import { createContentfulClient } from "../clients/contentful-client/impl/contentful-client-impl";
+import { sitemapData, SitemapDataT } from "./data/sitemap-data";
+import { pageById } from "./sitemap/methods/page-by-id";
+import { pageByPath } from "./sitemap/methods/page-by-path";
+import { pagesByTagId } from "./sitemap/methods/pages-by-tag-id";
+import { pagesByIds } from "./sitemap/methods/pages-by-ids";
+import { pagesByPaths } from "./sitemap/methods/pages-by-paths";
+import { regenerate } from "./sitemap/methods/regenerate";
+import { search } from "./sitemap/methods/search";
+import { status } from "./sitemap/methods/status";
+import { Either, right } from "../utils/fp-utils";
+import { pages } from "./sitemap/methods/pages";
+import { buildSitemapEagerly } from "./sitemap/helpers/build-sitemap-eagerly";
+import { cachedData } from "./sitemap/methods/cached-data";
+import { buildPagesByTagEagerly } from "./sitemap/helpers/build-pages-by-tag-eagerly";
 
-const pageTagIdPrefix = 'page';
+const pageTagIdPrefix = "page";
 const pageHomeTagId = `${pageTagIdPrefix}Home`;
 const localeTagIdPrefix = `locale`;
 
@@ -35,7 +36,7 @@ export type LocaleCodeT = string;
 export type SysIdT = string;
 export type MetadataT = { tags: Array<{ sys: { id: string } }> };
 export type PageT = {
-  type: 'page';
+  type: "page";
   sys: {
     id: string;
     cmaOnlyStatus?: StatusT;
@@ -56,13 +57,13 @@ export type RedirectT = {
   metadata?: MetadataT;
   path: string;
   title?: string;
-  type: 'redirect' | 'alias';
+  type: "redirect" | "alias";
   page: { sys: { id: string } };
 };
-export type RedirectIdT = RedirectT['sys']['id'];
-export type RedirectPathT = RedirectT['path'];
-export type PageIdT = (PageT | RedirectT)['sys']['id'];
-export type PagePathT = (PageT | RedirectT)['path'];
+export type RedirectIdT = RedirectT["sys"]["id"];
+export type RedirectPathT = RedirectT["path"];
+export type PageIdT = (PageT | RedirectT)["sys"]["id"];
+export type PagePathT = (PageT | RedirectT)["path"];
 export type TagIdT = string;
 export type LocalizedSitemapT = {
   root: { sys: { id: string } };
@@ -79,20 +80,16 @@ export type PagesByTagIdT = Map<LocaleCodeT, PagesByTagIdV>;
 
 export type CachedDataT = Pick<
   ArboretumClientCtx,
-  'data' | 'pagesByTagId' | 'sitemap'
+  "data" | "pagesByTagId" | "sitemap"
 >;
 
 export type ArboretumClientCtx = {
   preview: boolean;
-  contentfulClientType: ArboretumClientConfigT['type'];
+  contentfulClientType: ArboretumClientConfigT["type"];
   lastUpdatedAt: string;
   clientApi: ContentfulClientT;
   cmaPreviewClientApi?: ContentfulClientT;
-  options: Pick<
-    ArboretumClientContentfulConfigOptionsT,
-    'pageContentTypes' | 'redirectContentType'
-  > &
-    Pick<ArboretumClientOptions, 'includeEntryStatus'>;
+  options: ArboretumClientOptionsT;
   data: SitemapDataT;
   sitemap: SitemapT;
   pagesByTagId: PagesByTagIdT;
@@ -102,17 +99,17 @@ export type ArboretumClientCtx = {
 };
 
 const arboretumConfigOptions = (
-  config: ArboretumClientConfigT,
+  config: ArboretumClientConfigT
 ): Promise<ArboretumClientContentfulConfigOptionsT> => {
   const configType = config.type;
   switch (config.type) {
-    case 'cda-client': {
+    case "cda-client": {
       return Promise.resolve(config.contentful.options);
     }
-    case 'cda-client-params': {
+    case "cda-client-params": {
       return Promise.resolve(config.contentful.options);
     }
-    case 'cma-client': {
+    case "cma-client": {
       return Promise.resolve(config.contentful.options);
     }
     default: {
@@ -122,28 +119,28 @@ const arboretumConfigOptions = (
 };
 
 export const createArboretumClient = async (
-  config: ArboretumClientConfigT,
+  config: ArboretumClientConfigT
 ): Promise<{ client: ArboretumClientT; warnings?: Array<string> }> => {
   const clientApi = createContentfulClient(config);
   const cmaPreviewClientApi =
-    config.type === 'cma-client'
+    config.type === "cma-client"
       ? createContentfulClient({ ...config, preview: true })
       : undefined;
 
   const includeEntryStatus =
-    config.type === 'cma-client' ? !!config.options?.includeEntryStatus : false;
+    config.type === "cma-client" ? !!config.options?.includeEntryStatus : false;
   const options = await arboretumConfigOptions(config);
 
   const sitemapDataCtx: Pick<
     ArboretumClientCtx,
-    | 'clientApi'
-    | 'options'
-    | 'localeTagIdPrefix'
-    | 'pageHomeTagId'
-    | 'contentfulClientType'
-    | 'pageTagIdPrefix'
-    | 'cmaPreviewClientApi'
-    | 'preview'
+    | "clientApi"
+    | "options"
+    | "localeTagIdPrefix"
+    | "pageHomeTagId"
+    | "contentfulClientType"
+    | "pageTagIdPrefix"
+    | "cmaPreviewClientApi"
+    | "preview"
   > = {
     preview: config.preview,
     clientApi,
@@ -158,7 +155,7 @@ export const createArboretumClient = async (
   const dataE = config.options?.data
     ? right({ data: config.options?.data.data, warnings: undefined })
     : await sitemapData(sitemapDataCtx);
-  if (dataE._tag === 'Right') {
+  if (dataE._tag === "Right") {
     const c = {
       ...sitemapDataCtx,
       data: dataE.right.data,
@@ -198,27 +195,27 @@ export const createArboretumClient = async (
       warnings: dataE.right.warnings,
     };
   } else {
-    throw new Error(dataE.left.join('\n'));
+    throw new Error(dataE.left.join("\n"));
   }
 };
 
 export const createArboretumClientFromCdaClient = (
   config: Pick<
     ArboretumClientConfigFromCdaT,
-    'contentful' | 'preview' | 'options'
-  >,
-) => createArboretumClient({ ...config, type: 'cda-client' });
+    "contentful" | "preview" | "options"
+  >
+) => createArboretumClient({ ...config, type: "cda-client" });
 
 export const createArboretumClientFromCdaParams = (
   config: Pick<
     ArboretumClientConfigFromCdaParamsT,
-    'contentful' | 'preview' | 'options'
-  >,
-) => createArboretumClient({ ...config, type: 'cda-client-params' });
+    "contentful" | "preview" | "options"
+  >
+) => createArboretumClient({ ...config, type: "cda-client-params" });
 
 export const createArboretumClientFromCma = (
   config: Pick<
     ArboretumClientConfigFromCmaT,
-    'contentful' | 'preview' | 'options'
-  >,
-) => createArboretumClient({ ...config, type: 'cma-client' });
+    "contentful" | "preview" | "options"
+  >
+) => createArboretumClient({ ...config, type: "cma-client" });

@@ -1,9 +1,5 @@
 import { ContentfulClientApi, CreateClientParams } from "contentful";
-import {
-  ArboretumClientCtx,
-  CachedDataT,
-  SysIdT,
-} from "./impl/arboretum-client.impl";
+import { CachedDataT, SysIdT } from "./impl/arboretum-client.impl";
 import { Either } from "./utils/fp-utils";
 import { ContentfulEnvironmentAPI } from "contentful-management/dist/typings/create-environment-api";
 import {
@@ -102,6 +98,12 @@ export type ArboretumPageNodeT =
 
 export type OptionsT = { withChildren?: boolean; withAncestors?: boolean };
 
+export type ArboretumClientOptionsT = Pick<
+  ArboretumClientContentfulConfigOptionsT,
+  "pageContentTypes" | "redirectContentType"
+> &
+  Pick<ArboretumClientOptions, "includeEntryStatus">;
+
 export type ArboretumClientT = {
   pageByPath: (
     path: string,
@@ -140,7 +142,7 @@ export type ArboretumClientT = {
     lastUpdatedAt: string;
     pagesCount: number;
     localesCount: number;
-    contentful: ArboretumClientCtx["options"];
+    contentful: ArboretumClientOptionsT;
   };
   cachedData: () => CachedDataT;
 };
