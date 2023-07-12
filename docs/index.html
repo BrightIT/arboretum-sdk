@@ -50,6 +50,7 @@ Arboretum - The sitemap for contentful
 <pre><code class="language-ts"><span class="hl-2">import</span><span class="hl-1"> { </span><span class="hl-0">createArboretumClientFromCma</span><span class="hl-1"> } </span><span class="hl-2">from</span><span class="hl-1"> </span><span class="hl-3">&quot;@p8marketing/arboretum-sdk&quot;</span><span class="hl-1">;</span><br/><span class="hl-2">import</span><span class="hl-1"> { </span><span class="hl-0">createClient</span><span class="hl-1"> } </span><span class="hl-2">from</span><span class="hl-1"> </span><span class="hl-3">&quot;contentful-management&quot;</span><span class="hl-1">;</span><br/><br/><span class="hl-4">async</span><span class="hl-1"> () </span><span class="hl-4">=&gt;</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">cmaClient</span><span class="hl-1"> = </span><span class="hl-6">createClient</span><span class="hl-1">({</span><br/><span class="hl-1">    </span><span class="hl-0">accessToken:</span><span class="hl-1"> </span><span class="hl-3">&quot;[CONTENTFUL CDA/CPA ACCESS TOKEN]&quot;</span><span class="hl-1">,</span><br/><span class="hl-1">  });</span><br/><br/><span class="hl-1">  </span><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">spaceClient</span><span class="hl-1"> = </span><span class="hl-2">await</span><span class="hl-1"> </span><span class="hl-0">cmaClient</span><span class="hl-1">.</span><span class="hl-6">getSpace</span><span class="hl-1">(</span><span class="hl-3">&quot;[CONTENTFUL SPACE]&quot;</span><span class="hl-1">);</span><br/><br/><span class="hl-1">  </span><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">environmentClient</span><span class="hl-1"> = </span><span class="hl-2">await</span><span class="hl-1"> </span><span class="hl-0">spaceClient</span><span class="hl-1">.</span><span class="hl-6">getEnvironment</span><span class="hl-1">(</span><br/><span class="hl-1">    </span><span class="hl-3">&quot;[CONTENTFUL ENVIRONMENT]&quot;</span><br/><span class="hl-1">  );</span><br/><br/><span class="hl-1">  </span><span class="hl-4">const</span><span class="hl-1"> { </span><span class="hl-5">client</span><span class="hl-1">, </span><span class="hl-5">warnings</span><span class="hl-1"> } = </span><span class="hl-2">await</span><span class="hl-1"> </span><span class="hl-6">createArboretumClientFromCma</span><span class="hl-1">({</span><br/><span class="hl-1">    </span><span class="hl-0">preview:</span><span class="hl-1"> </span><span class="hl-4">false</span><span class="hl-1">,</span><br/><span class="hl-1">    </span><span class="hl-0">contentful:</span><span class="hl-1"> {</span><br/><span class="hl-1">      </span><span class="hl-0">client:</span><span class="hl-1"> </span><span class="hl-0">environmentClient</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-7">// Sample page content type configuration</span><br/><span class="hl-1">      </span><span class="hl-0">options:</span><span class="hl-1"> {</span><br/><span class="hl-1">        </span><span class="hl-0">pageContentTypes:</span><span class="hl-1"> {</span><br/><span class="hl-1">          </span><span class="hl-0">page:</span><span class="hl-1"> {</span><br/><span class="hl-1">            </span><span class="hl-0">titleFieldId:</span><span class="hl-1"> </span><span class="hl-3">&quot;name&quot;</span><span class="hl-1">,</span><br/><span class="hl-1">            </span><span class="hl-0">slugFieldId:</span><span class="hl-1"> </span><span class="hl-3">&quot;slug&quot;</span><span class="hl-1">,</span><br/><span class="hl-1">            </span><span class="hl-0">childPagesFieldId:</span><span class="hl-1"> </span><span class="hl-3">&quot;childPages&quot;</span><span class="hl-1">,</span><br/><span class="hl-1">          },</span><br/><span class="hl-1">        },</span><br/><span class="hl-1">      },</span><br/><span class="hl-1">    },</span><br/><span class="hl-1">    </span><span class="hl-7">// Client configuration options</span><br/><span class="hl-1">    </span><span class="hl-0">options:</span><span class="hl-1"> {},</span><br/><span class="hl-1">  });</span><br/><span class="hl-1">};</span>
 </code><button>Copy</button></pre>
 <p>In this step all data required to calculate sitemap is fetched and stored in internal memory. That&#39;s the only place where dynamic requests to Contentful are happening. All subsequent interactions with the Arboretum SDK client rely on the data fetched in this step.</p>
+<p>*** Important: Remember to provide valid content types configuration unique to your contentful environment and mark entry representing the home page with the tag <code>pageHome</code> (you can customize this tag using <code>homePageTagId</code> configuration). </p>
 <a id="md:client-configuration-options" class="tsd-anchor"></a><h3><a href="#md:client-configuration-options">Client configuration options</a></h3><table>
 <thead>
 <tr>
@@ -61,17 +62,17 @@ Arboretum - The sitemap for contentful
 <tbody><tr>
 <td>eageryly</td>
 <td>false</td>
-<td>by default localized sitemap is generated only for locales that were explicitly requested. When set to <code>true</code> sitemap is generated for every locale in advance.</td>
+<td>By default localized sitemap is generated only for locales that were explicitly requested. When set to <code>true</code> sitemap is generated for every locale in advance.</td>
 </tr>
 <tr>
 <td>data</td>
 <td></td>
-<td>you can cache data computed during previous Arboretum SDK client initialization (<code>client.cachedData</code> method) and use it to create a new client. When this parameter is defined all requests to Contentful are skipped.</td>
+<td>You can cache data computed during previous Arboretum SDK client initialization (<code>client.cachedData</code> method) and use it to create a new client. When this parameter is defined all requests to Contentful are skipped.</td>
 </tr>
 <tr>
 <td>includeEntryStatus</td>
 <td>false</td>
-<td>only for Arboretum SDK clients that were created based on Contentful CMA. When set to <code>true</code> page&#39;s <code>cmaOnlyStatus</code> field will be defined.</td>
+<td>Only for Arboretum SDK clients that were created based on Contentful CMA. When set to <code>true</code> page&#39;s <code>cmaOnlyStatus</code> field will be defined.</td>
 </tr>
 </tbody></table>
 <a id="md:contentful-configuration-options" class="tsd-anchor"></a><h3><a href="#md:contentful-configuration-options">Contentful configuration options</a></h3><table>
@@ -85,17 +86,75 @@ Arboretum - The sitemap for contentful
 <tbody><tr>
 <td>homePageTagId</td>
 <td>pageHome</td>
-<td>sitemap root tag id</td>
+<td>Sitemap root tag id</td>
 </tr>
 <tr>
 <td>pageContentTypes</td>
 <td></td>
-<td><strong>Required</strong>. Object consisting of keys that are content type id&#39;s and values that are objects with the following keys: <code>titleFieldId</code> (field id representing page title), <code>slugFieldId</code> (field id representing page slug) and <code>childPagesFieldId</code> (optional field id representing references to child pages). Sample value: {page:{&quot;titleFieldId&quot;:&quot;name&quot;,&quot;slugFieldId&quot;:&quot;slug&quot;,&quot;childPagesFieldId&quot;:&quot;childPages&quot;}}</td>
+<td><strong>Required</strong>. Object consisting of keys that are content type id&#39;s and values described <a href="#contentful-page-content-types-configuration">here</a>. Sample value: <code>{page:{&quot;titleFieldId&quot;:&quot;name&quot;,&quot;slugFieldId&quot;:&quot;slug&quot;,&quot;childPagesFieldId&quot;:&quot;childPages&quot;}}</code></td>
 </tr>
 <tr>
 <td>redirectContentType</td>
 <td></td>
-<td>Object with the following keys: <code>id</code> (redirect content type id), <code>titleFieldId</code> (field id representing redirect title), <code>typeFieldId</code> (field id representing redirect type - either <code>alias</code> or <code>redirect</code>), <code>pageFieldId</code> (field id representing page reference), <code>pathFieldId</code> (field id representing redirect path). Sample value: {&quot;id&quot;:&quot;redirect&quot;,&quot;titleFieldId&quot;:&quot;name&quot;,&quot;typeFieldId&quot;:&quot;type&quot;,&quot;pageFieldId&quot;:&quot;page&quot;,&quot;pathFieldId&quot;:&quot;path&quot;}</td>
+<td>Object described <a href="#contentful-redirect-content-type-configuration">here</a>. Sample value: <code>{&quot;id&quot;:&quot;redirect&quot;,&quot;titleFieldId&quot;:&quot;name&quot;,&quot;typeFieldId&quot;:&quot;type&quot;,&quot;pageFieldId&quot;:&quot;page&quot;,&quot;pathFieldId&quot;:&quot;path&quot;}</code></td>
+</tr>
+</tbody></table>
+<a id="md:contentful-page-content-types-configuration" class="tsd-anchor"></a><h3><a href="#md:contentful-page-content-types-configuration">Contentful page content types configuration</a></h3><table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>titleFieldId</td>
+<td></td>
+<td>Id of the field that represents the page title. This field should be of type <code>Symbol</code>.</td>
+</tr>
+<tr>
+<td>slugFieldId</td>
+<td></td>
+<td><strong>Required</strong>. Id of the field that represents the page slug that should match the following regexp <code>^((\/)|(([\/\w\-\._~:!$&amp;&#39;\(\)*+,;@]|(%\d+))+))$</code>. This field should be of type  <code>Symbol</code>.</td>
+</tr>
+<tr>
+<td>childPagesFieldId</td>
+<td></td>
+<td>Id of the field that represents the references to child pages. This field should be of type <code>Array</code> and include references to other entries that were configured as pages.</td>
+</tr>
+</tbody></table>
+<a id="md:contentful-redirect-content-type-configuration" class="tsd-anchor"></a><h3><a href="#md:contentful-redirect-content-type-configuration">Contentful redirect content type configuration</a></h3><table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td></td>
+<td><strong>Required</strong>. Id of the redirect content type.</td>
+</tr>
+<tr>
+<td>titleFieldId</td>
+<td></td>
+<td>Id of the field that represents the redirect title. This field should be of type <code>Symbol</code>.</td>
+</tr>
+<tr>
+<td>typeFieldId</td>
+<td></td>
+<td><strong>Required</strong>. Id of the field that represents the redirect type (should be either <code>alias</code> or <code>redirect</code>). This field should be of type <code>Symbol</code>.</td>
+</tr>
+<tr>
+<td>pageFieldId</td>
+<td></td>
+<td><strong>Required</strong>. Id of the field that represents the page reference. This field should be of type <code>Link</code> and accept references only to entries that were configured as pages.</td>
+</tr>
+<tr>
+<td>pathFieldId</td>
+<td></td>
+<td><strong>Required</strong>. Id of the field that represents the redirect path that should match the following regexp <code>\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?$</code>. This field should be of type <code>Symbol</code>.</td>
 </tr>
 </tbody></table>
 <a id="md:basic-usage" class="tsd-anchor"></a><h1><a href="#md:basic-usage">Basic usage</a></h1><p>Most of the results returned by Arboretum SDK are wrapped by <code>Eider</code> (inspired by <a href="https://gcanti.github.io/fp-ts/modules/Either.ts">fp-ts Eider</a>) where successful responses are marked with <code>_tag</code> equal to <code>&quot;Right&quot;</code> and failed responses are marked with <code>_tag</code> equal to <code>&quot;Left&quot;</code>.</p>
@@ -134,7 +193,9 @@ Arboretum - The sitemap for contentful
 <li><a href="#md:client-configuration-options"><span>Client configuration options</span></a></li>
 <li>
 <ul>
-<li><a href="#md:contentful-configuration-options"><span>Contentful configuration options</span></a></li></ul></li></ul></li>
+<li><a href="#md:contentful-configuration-options"><span>Contentful configuration options</span></a></li>
+<li><a href="#md:contentful-page-content-types-configuration"><span>Contentful page content types configuration</span></a></li>
+<li><a href="#md:contentful-redirect-content-type-configuration"><span>Contentful redirect content type configuration</span></a></li></ul></li></ul></li>
 <li><a href="#md:basic-usage"><span>Basic usage</span></a></li>
 <li><a href="#md:documentation"><span>Documentation</span></a></li></ul></li></ul></div></details></div>
 <div class="site-menu">

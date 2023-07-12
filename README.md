@@ -133,21 +133,37 @@ async () => {
 
 In this step all data required to calculate sitemap is fetched and stored in internal memory. That's the only place where dynamic requests to Contentful are happening. All subsequent interactions with the Arboretum SDK client rely on the data fetched in this step.
 
+*** Important: Remember to provide valid content types configuration unique to your contentful environment and mark entry representing the home page with the tag `pageHome` (you can customize this tag using `homePageTagId` configuration). 
+
 ### Client configuration options
 
 |                    | Default | Description                                                                                                                                                                                                            |
 | ------------------ | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| eageryly           | false   | by default localized sitemap is generated only for locales that were explicitly requested. When set to `true` sitemap is generated for every locale in advance.                                                        |
-| data               |         | you can cache data computed during previous Arboretum SDK client initialization (`client.cachedData` method) and use it to create a new client. When this parameter is defined all requests to Contentful are skipped. |
-| includeEntryStatus | false   | only for Arboretum SDK clients that were created based on Contentful CMA. When set to `true` page's `cmaOnlyStatus` field will be defined.                                                                             |
+| eageryly           | false   | By default localized sitemap is generated only for locales that were explicitly requested. When set to `true` sitemap is generated for every locale in advance.                                                        |
+| data               |         | You can cache data computed during previous Arboretum SDK client initialization (`client.cachedData` method) and use it to create a new client. When this parameter is defined all requests to Contentful are skipped. |
+| includeEntryStatus | false   | Only for Arboretum SDK clients that were created based on Contentful CMA. When set to `true` page's `cmaOnlyStatus` field will be defined.                                                                             |
 
 ### Contentful configuration options
 
-| Default             | Default  | Description                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| ------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| homePageTagId       | pageHome | sitemap root tag id                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| pageContentTypes    |          | **Required**. Object consisting of keys that are content type id's and values that are objects with the following keys: `titleFieldId` (field id representing page title), `slugFieldId` (field id representing page slug) and `childPagesFieldId` (optional field id representing references to child pages). Sample value: {page:{"titleFieldId":"name","slugFieldId":"slug","childPagesFieldId":"childPages"}}                           |
-| redirectContentType |          | Object with the following keys: `id` (redirect content type id), `titleFieldId` (field id representing redirect title), `typeFieldId` (field id representing redirect type - either `alias` or `redirect`), `pageFieldId` (field id representing page reference), `pathFieldId` (field id representing redirect path). Sample value: {"id":"redirect","titleFieldId":"name","typeFieldId":"type","pageFieldId":"page","pathFieldId":"path"} |
+| Default             | Default  | Description                                                                                                                                                                                        |
+|---------------------|----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| homePageTagId       | pageHome | Sitemap root tag id                                                                                                                                                                                |
+| pageContentTypes    |          | **Required**. Object consisting of keys that are content type id's and values described [here](#contentful-page-content-types-configuration). Sample value: `{page:{"titleFieldId":"name","slugFieldId":"slug","childPagesFieldId":"childPages"}}` |
+| redirectContentType |          | Object described [here](#contentful-redirect-content-type-configuration). Sample value: `{"id":"redirect","titleFieldId":"name","typeFieldId":"type","pageFieldId":"page","pathFieldId":"path"}`                                                      |
+### Contentful page content types configuration
+| Name              | Default | Description                                                                                                                                                                                     |
+|-------------------|---------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| titleFieldId      |         | Id of the field that represents the page title. This field should be of type `Symbol`.                                                                                                          |
+| slugFieldId       |         | **Required**. Id of the field that represents the page slug that should match the following regexp `^((\/)\|(([\/\w\-\._~:!$&'\(\)*+,;@]\|(%\d+))+))$`. This field should be of type  `Symbol`. |
+| childPagesFieldId |         | Id of the field that represents the references to child pages. This field should be of type `Array` and include references to other entries that were configured as pages.                      |
+### Contentful redirect content type configuration
+| Name         | Default | Description                                                                                                                                                                         |
+|--------------|---------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| id           |         | **Required**. Id of the redirect content type.                                                                                                                                      |
+| titleFieldId |         | Id of the field that represents the redirect title. This field should be of type `Symbol`.                                                                                          |
+| typeFieldId  |         | **Required**. Id of the field that represents the redirect type (should be either `alias` or `redirect`). This field should be of type `Symbol`.                                    |
+| pageFieldId  |         | **Required**. Id of the field that represents the page reference. This field should be of type `Link` and accept references only to entries that were configured as pages.          |
+| pathFieldId  |         | **Required**. Id of the field that represents the redirect path that should match the following regexp `\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?$`. This field should be of type `Symbol`. |
 
 # Basic usage
 
