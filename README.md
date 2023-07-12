@@ -10,12 +10,13 @@ Arboretum - The sitemap for contentful
 
 # Introduction
 
-`@p8marketing/arboretum-sdk` is a library for building sitemaps in [Contentful](<https://www.contentful.com/>).
-* **Dynamic:** Arboretum SDK builds sitemap dynamically based on the pages structure defined in Contentful. There are no hard-coded paths, so editors have full power over the sitemap.
-* **Customizable:** Content types that represent pages are configurable, so you can integrate Arboretum SDK even in existing projects.
-* **Efficient:** Number of requests to Contentful is minimalized.
-* **Lazy:** By default sitemap is built only for locales that were explicitly requested.
-* **In memory:** Sitemap is stored in memory, so no other dependencies (e.g. database) are required.
+`@p8marketing/arboretum-sdk` is a library for building sitemaps in [Contentful](https://www.contentful.com/).
+
+- **Dynamic:** Arboretum SDK builds sitemap dynamically based on the pages structure defined in Contentful. There are no hard-coded paths, so editors have full power over the sitemap.
+- **Customizable:** Content types that represent pages are configurable, so you can integrate Arboretum SDK even in existing projects.
+- **Efficient:** Number of requests to Contentful is minimalized.
+- **Lazy:** By default sitemap is built only for locales that were explicitly requested.
+- **In memory:** Sitemap is stored in memory, so no other dependencies (e.g. database) are required.
 
 # Installation
 
@@ -153,10 +154,9 @@ In this step all data required to calculate sitemap is fetched and stored in int
 Most of the results returned by Arboretum SDK are wrapped by `Eider` (inspired by [fp-ts Eider](https://gcanti.github.io/fp-ts/modules/Either.ts)) where successful responses are marked with `_tag` equal to `"Right"` and failed responses are marked with `_tag` equal to `"Left"`.
 
 ```ts
-async () => {
-  const homePage = await client.pageByPath("/en");
-  console.log(homePage);
-  /* prints 
+const homePage = client.pageByPath("/en");
+console.log(homePage);
+/* prints 
   {
     _tag: 'Right',
     right: {
@@ -176,9 +176,9 @@ or
   
  */
 
-  const blogPage = await client.pageById("en", "4bkXR9tM8c1cGzTe7BMIgn");
-  console.log(blogPage);
-  /* prints 
+const blogPage = client.pageById("en", "4bkXR9tM8c1cGzTe7BMIgn");
+console.log(blogPage);
+/* prints 
   {
     _tag: "Right",
     right: {
@@ -200,9 +200,8 @@ or
   }
   
  */
-};
 ```
+
 # Documentation
-- [Arboretum SDK Documentation](<https://brightit.github.io/arboretum-sdk/>)
 
-
+- [Arboretum SDK Documentation](https://brightit.github.io/arboretum-sdk/)
