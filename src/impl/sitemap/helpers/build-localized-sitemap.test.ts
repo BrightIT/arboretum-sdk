@@ -132,7 +132,7 @@ const redirectToEntry = (page: RedirectT, tagsIds?: Array<string>): EntryT => ({
       [defaultLocale.code]: { sys: { id: page.page.sys.id } },
     },
     [redirectContentTypePath]: {
-      [defaultLocale.code]: page.path,
+      [defaultLocale.code]: page.path.slice(("/" + defaultLocale.code).length),
     },
     [redirectContentTypeType]: {
       [defaultLocale.code]: page.type,

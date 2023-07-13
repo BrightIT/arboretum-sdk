@@ -116,7 +116,7 @@ const mockedRedirect1: RedirectT = {
   type: 'alias',
   sys: { id: mockedRedirect1SysId },
   page: { sys: { id: mockedRedirect1SysId } },
-  path: mockedRedirect1SysId,
+  path: mockedRoot.path + '/' + mockedRedirect1SysId,
   parent: { sys: { id: mockedRoot.sys.id } },
 };
 
@@ -124,7 +124,7 @@ const mockedRedirect2: RedirectT = {
   type: 'redirect',
   sys: { id: mockedRedirect2SysId },
   page: { sys: { id: mockedRedirect2SysId } },
-  path: mockedRedirect2SysId,
+  path: mockedRoot.path + '/' + mockedRedirect2SysId,
   parent: { sys: { id: mockedRoot.sys.id } },
 };
 
@@ -132,7 +132,7 @@ const mockedRedirect3: RedirectT = {
   type: 'alias',
   sys: { id: mockedRedirect3SysId },
   page: { sys: { id: mockedRedirect3SysId } },
-  path: mockedRedirect3SysId,
+  path: mockedRoot.path + '/' +  mockedRedirect3SysId,
   parent: { sys: { id: mockedRoot.sys.id } },
 };
 
