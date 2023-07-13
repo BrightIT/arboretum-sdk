@@ -1,6 +1,6 @@
 {
   "name": "@p8marketing/arboretum-sdk",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "license": "MIT",
   "description": "The sitemap for contentful",
   "dependencies": {
