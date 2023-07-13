@@ -1,29 +1,29 @@
-import { ArboretumClientContentfulConfigOptionsT } from '../../arboretum-client';
-import { ArboretumClientCtx } from '../arboretum-client.impl';
+import { ArboretumClientContentfulConfigOptionsT } from "../../arboretum-client";
+import { ArboretumClientCtx } from "../arboretum-client.impl";
 import {
   EntryIdT,
   EntryT,
   StatusT,
-} from '../../clients/contentful-client/contentful-client';
-import { entryStatus } from './helpers/entry-status';
-import { getAllEntriesRecursively } from './helpers/get-all-entries-recursively';
-import { arrayToMap } from '../../utils/array-to-map';
+} from "../../clients/contentful-client/contentful-client";
+import { entryStatus } from "./helpers/entry-status";
+import { getAllEntriesRecursively } from "./helpers/get-all-entries-recursively";
+import { arrayToMap } from "../../utils/array-to-map";
 
 const getAllRedirectEntriesRecursively = async (
-  ctx: Pick<ArboretumClientCtx, 'clientApi' | 'contentfulClientType'>,
+  ctx: Pick<ArboretumClientCtx, "clientApi" | "contentfulClientType">,
   redirectContentType: NonNullable<
-    ArboretumClientContentfulConfigOptionsT['redirectContentType']
+    ArboretumClientContentfulConfigOptionsT["redirectContentType"]
   >,
   skip: number,
   acc: Array<EntryT>,
-  select?: string,
+  select?: string
 ): Promise<Array<EntryT>> => {
   const fieldsSelect = [
     redirectContentType.titleFieldId,
     redirectContentType.pageFieldId,
     redirectContentType.typeFieldId,
     redirectContentType.pathFieldId,
-  ].flatMap(id => (id ? [`fields.${id}`] : []));
+  ].flatMap((id) => (id ? [`fields.${id}`] : []));
 
   return getAllEntriesRecursively(
     ctx.clientApi,
@@ -49,40 +49,41 @@ const getAllRedirectEntriesRecursively = async (
       ...
     },
 }*/
-    select || ctx.contentfulClientType === 'cma-client'
+    select || ctx.contentfulClientType === "cma-client"
       ? undefined
-      : ['sys', 'metadata', ...fieldsSelect].join(','),
+      : ["sys", "metadata", ...fieldsSelect].join(","),
+    [redirectContentType.pageFieldId]
   );
 };
 
 export const cmaOnlyEntriesStatusRecord = async (
   ctx: Pick<
     ArboretumClientCtx,
-    'clientApi' | 'contentfulClientType' | 'options'
-  >,
+    "clientApi" | "contentfulClientType" | "options"
+  >
 ): Promise<Map<EntryIdT, StatusT | undefined>> => {
   const redirectEntries = ctx.options.redirectContentType
     ? await getAllRedirectEntriesRecursively(
         ctx,
         ctx.options.redirectContentType,
         0,
-        [],
+        []
       )
     : [];
-  return arrayToMap<EntryT, StatusT | undefined>(e => e.sys.id)(entry =>
-    entryStatus(entry.sys),
+  return arrayToMap<EntryT, StatusT | undefined>((e) => e.sys.id)((entry) =>
+    entryStatus(entry.sys)
   )(redirectEntries);
 };
 
 export const redirectEntries = async (
   ctx: Pick<
     ArboretumClientCtx,
-    | 'clientApi'
-    | 'options'
-    | 'contentfulClientType'
-    | 'cmaPreviewClientApi'
-    | 'preview'
-  >,
+    | "clientApi"
+    | "options"
+    | "contentfulClientType"
+    | "cmaPreviewClientApi"
+    | "preview"
+  >
 ): Promise<Array<EntryT>> => {
   const { cmaPreviewClientApi, options } = ctx;
 
@@ -96,7 +97,7 @@ export const redirectEntries = async (
   */
   const statusRecordPromise =
     ctx.options.includeEntryStatus &&
-    ctx.contentfulClientType === 'cma-client' &&
+    ctx.contentfulClientType === "cma-client" &&
     !ctx.preview &&
     cmaPreviewClientApi
       ? cmaOnlyEntriesStatusRecord({ ...ctx, clientApi: cmaPreviewClientApi })
@@ -107,9 +108,9 @@ export const redirectEntries = async (
     statusRecordPromise,
   ]);
 
-  return redirectEntries.map(entry => {
+  return redirectEntries.map((entry) => {
     const cmaOnlyStatus =
-      ctx.contentfulClientType === 'cma-client'
+      ctx.contentfulClientType === "cma-client"
         ? entryStatus(entry.sys) || cmaOnlyStatusRecord.get(entry.sys.id)
         : undefined;
     if (cmaOnlyStatus) {

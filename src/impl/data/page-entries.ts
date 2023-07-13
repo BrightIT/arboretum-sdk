@@ -1,30 +1,30 @@
-import { ArboretumClientContentfulConfigOptionsT } from '../../arboretum-client';
-import { ArboretumClientCtx } from '../arboretum-client.impl';
+import { ArboretumClientContentfulConfigOptionsT } from "../../arboretum-client";
+import { ArboretumClientCtx } from "../arboretum-client.impl";
 import {
   EntryIdT,
   EntryT,
   StatusT,
-} from '../../clients/contentful-client/contentful-client';
-import { entryStatus } from './helpers/entry-status';
-import { getAllEntriesRecursively } from './helpers/get-all-entries-recursively';
-import { EntriesT } from './sitemap-data';
-import { arrayToMap } from '../../utils/array-to-map';
+} from "../../clients/contentful-client/contentful-client";
+import { entryStatus } from "./helpers/entry-status";
+import { getAllEntriesRecursively } from "./helpers/get-all-entries-recursively";
+import { EntriesT } from "./sitemap-data";
+import { arrayToMap } from "../../utils/array-to-map";
 
 const getAllPageEntriesRecursively = async (
-  { getEntries }: Pick<ArboretumClientCtx['clientApi'], 'getEntries'>,
-  contentfulClientType: ArboretumClientCtx['contentfulClientType'],
-  pageContentTypeOpt: ArboretumClientContentfulConfigOptionsT['pageContentTypes'][string] & {
+  { getEntries }: Pick<ArboretumClientCtx["clientApi"], "getEntries">,
+  contentfulClientType: ArboretumClientCtx["contentfulClientType"],
+  pageContentTypeOpt: ArboretumClientContentfulConfigOptionsT["pageContentTypes"][string] & {
     id: string;
   },
   skip: number,
   acc: Array<EntryT>,
-  select?: string,
+  select?: string
 ): Promise<Array<EntryT>> => {
   const fieldsSelect = [
     pageContentTypeOpt.slugFieldId,
     pageContentTypeOpt.childPagesFieldId,
     pageContentTypeOpt.titleFieldId,
-  ].flatMap(id => (id ? [`fields.${id}`] : []));
+  ].flatMap((id) => (id ? [`fields.${id}`] : []));
 
   return getAllEntriesRecursively(
     { getEntries },
@@ -50,16 +50,19 @@ const getAllPageEntriesRecursively = async (
       ...
     },
 }*/
-    select || contentfulClientType === 'cma-client'
+    select || contentfulClientType === "cma-client"
       ? undefined
-      : ['sys', 'metadata', ...fieldsSelect].join(','),
+      : ["sys", "metadata", ...fieldsSelect].join(","),
+    pageContentTypeOpt.childPagesFieldId
+      ? [pageContentTypeOpt.childPagesFieldId]
+      : []
   );
 };
 
 const cmaOnlyEntriesStatusMap = async (
-  { getEntries }: Pick<ArboretumClientCtx['clientApi'], 'getEntries'>,
-  contentfulClientType: ArboretumClientCtx['contentfulClientType'],
-  options: ArboretumClientCtx['options'],
+  { getEntries }: Pick<ArboretumClientCtx["clientApi"], "getEntries">,
+  contentfulClientType: ArboretumClientCtx["contentfulClientType"],
+  options: ArboretumClientCtx["options"]
 ): Promise<Map<EntryIdT, StatusT | undefined>> => {
   const pageContentTypes = Object.entries(options.pageContentTypes);
   const pageEntries = await Promise.all(
@@ -70,23 +73,23 @@ const cmaOnlyEntriesStatusMap = async (
         { id, ...fieldIds },
         0,
         [],
-        'sys',
-      ),
-    ),
+        "sys"
+      )
+    )
   );
 
-  return arrayToMap<EntryT, StatusT | undefined>(e => e.sys.id)(entry =>
-    entryStatus(entry.sys),
+  return arrayToMap<EntryT, StatusT | undefined>((e) => e.sys.id)((entry) =>
+    entryStatus(entry.sys)
   )(pageEntries.flat());
 };
 
 export const pageEntries = async (
-  ctx: Pick<ArboretumClientCtx, 'options' | 'contentfulClientType' | 'preview'>,
-  apiClient: Pick<ArboretumClientCtx['clientApi'], 'getEntries'>,
+  ctx: Pick<ArboretumClientCtx, "options" | "contentfulClientType" | "preview">,
+  apiClient: Pick<ArboretumClientCtx["clientApi"], "getEntries">,
   cmaPreviewClientApi?: Pick<
-    NonNullable<ArboretumClientCtx['cmaPreviewClientApi']>,
-    'getEntries'
-  >,
+    NonNullable<ArboretumClientCtx["cmaPreviewClientApi"]>,
+    "getEntries"
+  >
 ): Promise<EntriesT> => {
   const { options } = ctx;
   const pageContentTypes = Object.entries(options.pageContentTypes);
@@ -98,9 +101,9 @@ export const pageEntries = async (
         ctx.contentfulClientType,
         { id, ...fieldIds },
         0,
-        [],
-      ),
-    ),
+        []
+      )
+    )
   );
   /*
     This is woraround. Published entries from CMA (the same with CDA and CPA)
@@ -108,13 +111,13 @@ export const pageEntries = async (
   */
   const statusRecordPromise =
     ctx.options.includeEntryStatus &&
-    ctx.contentfulClientType === 'cma-client' &&
+    ctx.contentfulClientType === "cma-client" &&
     !ctx.preview &&
     cmaPreviewClientApi
       ? cmaOnlyEntriesStatusMap(
           cmaPreviewClientApi,
           ctx.contentfulClientType,
-          ctx.options,
+          ctx.options
         )
       : Promise.resolve(new Map<EntryIdT, StatusT | undefined>());
 
@@ -123,9 +126,9 @@ export const pageEntries = async (
     statusRecordPromise,
   ]);
 
-  return arrayToMap<EntryT, EntryT>(e => e.sys.id)(entry => {
+  return arrayToMap<EntryT, EntryT>((e) => e.sys.id)((entry) => {
     const cmaOnlyStatus =
-      ctx.contentfulClientType === 'cma-client'
+      ctx.contentfulClientType === "cma-client"
         ? entryStatus(entry.sys) || cmaOnlyStatusRecord.get(entry.sys.id)
         : undefined;
     if (cmaOnlyStatus) {
