@@ -105,6 +105,10 @@ export type ArboretumClientOptionsT = Pick<
   Pick<ArboretumClientOptions, "includeEntryStatus">;
 
 export type ArboretumClientT = {
+  homePage: (
+    localeCode: string,
+    options?: OptionsT
+  ) => Either<string, ArboretumPageT>;
   pageByPath: (
     path: string,
     options?: OptionsT

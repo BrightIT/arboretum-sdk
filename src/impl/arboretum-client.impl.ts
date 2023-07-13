@@ -27,6 +27,7 @@ import { pages } from "./sitemap/methods/pages";
 import { buildSitemapEagerly } from "./sitemap/helpers/build-sitemap-eagerly";
 import { cachedData } from "./sitemap/methods/cached-data";
 import { buildPagesByTagEagerly } from "./sitemap/helpers/build-pages-by-tag-eagerly";
+import { homePage } from "./sitemap/methods/home-page";
 
 const pageTagIdPrefix = "page";
 const pageHomeTagId = `${pageTagIdPrefix}Home`;
@@ -182,6 +183,7 @@ export const createArboretumClient = async (
     };
     return {
       client: {
+        homePage: homePage(ctx),
         pageByPath: pageByPath(ctx),
         pagesByPaths: pagesByPaths(ctx),
         pageById: pageById(ctx),
