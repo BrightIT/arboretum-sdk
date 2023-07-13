@@ -96,6 +96,7 @@ export type ArboretumClientCtx = {
   localeTagIdPrefix: string;
   pageTagIdPrefix: string;
   pageHomeTagId: string;
+  regenerationInProgress: boolean;
 };
 
 const arboretumConfigOptions = (
@@ -177,6 +178,7 @@ export const createArboretumClient = async (
 
       pagesByTagId: pagesByTagIdRecord,
       lastUpdatedAt: new Date().toISOString(),
+      regenerationInProgress: false,
     };
     return {
       client: {

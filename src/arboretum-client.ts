@@ -143,6 +143,7 @@ export type ArboretumClientT = {
     pagesCount: number;
     localesCount: number;
     contentful: ArboretumClientOptionsT;
+    regenerationInProgress: boolean;
   };
   cachedData: () => CachedDataT;
 };

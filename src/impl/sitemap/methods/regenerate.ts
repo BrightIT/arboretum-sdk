@@ -5,7 +5,10 @@ import { sitemapData } from '../../data/sitemap-data';
 export const regenerate =
   (ctx: ArboretumClientCtx): ArboretumClientT['regenerate'] =>
   async () => {
-    const dataE = await sitemapData(ctx);
+    ctx.regenerationInProgress = true;
+    const dataE = await sitemapData(ctx).finally(() => {
+      ctx.regenerationInProgress = false;
+    });
     if (dataE._tag === 'Right') {
       ctx.sitemap = new Map();
       ctx.pagesByTagId = new Map();

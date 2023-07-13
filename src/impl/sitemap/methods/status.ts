@@ -6,7 +6,7 @@ export const status =
   (
     ctx: Pick<
       ArboretumClientCtx,
-      'data' | 'options' | 'sitemap' | 'lastUpdatedAt' | 'pageHomeTagId'
+      'data' | 'options' | 'sitemap' | 'lastUpdatedAt' | 'pageHomeTagId' | "regenerationInProgress"
     >,
   ): ArboretumClientT['status'] =>
   () => {
@@ -27,5 +27,6 @@ export const status =
       localesCount,
       lastUpdatedAt: ctx.lastUpdatedAt,
       contentful: ctx.options,
+      regenerationInProgress: ctx.regenerationInProgress
     };
   };
