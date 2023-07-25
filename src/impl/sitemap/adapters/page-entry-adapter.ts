@@ -21,7 +21,8 @@ export const pageEntryAdapter = (
   const slug = fieldValue<string>(
     slugField.localized,
     entry.fields[slugField.id],
-  );
+  )?.toLowerCase();
+  
   const title = titleField
     ? fieldValue<string>(titleField.localized, entry.fields[titleField.id])
     : undefined;

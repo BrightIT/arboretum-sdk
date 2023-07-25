@@ -26,7 +26,7 @@ export const redirectEntryAdapter = (
   const path = fieldValue<string>(
     pathField.localized,
     entry.fields[pathField.id]
-  );
+  )?.toLowerCase();
   const type = fieldValue<string>(
     typeField.localized,
     entry.fields[typeField.id]
