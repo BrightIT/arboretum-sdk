@@ -1,5 +1,5 @@
 <h3 align="center">
-  <a href="https://gcanti.github.io/fp-ts/">
+  <a href="https://p8.group">
     <img src="./logo.svg">
   </a>
 </h3>
