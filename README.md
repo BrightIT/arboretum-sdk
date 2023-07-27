@@ -167,7 +167,7 @@ In this step all data required to calculate sitemap is fetched and stored in int
 
 # Basic usage
 
-Most of the results returned by Arboretum SDK are wrapped by `Eider` (inspired by [fp-ts Eider](https://gcanti.github.io/fp-ts/modules/Either.ts)) where successful responses are marked with `_tag` equal to `"Right"` and failed responses are marked with `_tag` equal to `"Left"`.
+Most of the results returned by Arboretum SDK are wrapped by `Either` (inspired by [fp-ts Either](https://gcanti.github.io/fp-ts/modules/Either.ts)) where successful responses are marked with `_tag` equal to `"Right"` and failed responses are marked with `_tag` equal to `"Left"`.
 
 ```ts
 const homePage = client.pageByPath("/en");
