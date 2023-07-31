@@ -5,7 +5,7 @@
 </h3>
 
 <p align="center">
-Arboretum - The sitemap for contentful
+Arboretum - The sitemap for Contentful
 </p>
 
 # Introduction
