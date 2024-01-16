@@ -10,7 +10,7 @@ Arboretum - The sitemap for Contentful
 
 # Introduction
 
-`@p8marketing/arboretum-sdk` is a library for building sitemaps in [Contentful](https://www.contentful.com/).
+`@bright.global/arboretum-sdk` is a library for building sitemaps in [Contentful](https://www.contentful.com/).
 
 - **Dynamic:** Arboretum SDK builds sitemap dynamically based on the pages structure defined in Contentful. There are no hard-coded paths, so editors have full power over the sitemap.
 - **Customizable:** Content types that represent pages are configurable, so you can integrate Arboretum SDK even in existing projects.
@@ -23,7 +23,7 @@ Arboretum - The sitemap for Contentful
 To install the stable version:
 
 ```
-yarn add @p8marketing/arboretum-sdk
+yarn add @bright.global/arboretum-sdk
 ```
 
 # Create client
@@ -33,7 +33,7 @@ Basically, there are 3 ways to create Arboretum SDK client:
 - By providing required credentials by hand
 
 ```ts
-import { createArboretumClientFromCdaParams } from "@p8marketing/arboretum-sdk";
+import { createArboretumClientFromCdaParams } from "@bright.global/arboretum-sdk";
 
 (async () => {
   const { client, warnings } = await createArboretumClientFromCdaParams({
@@ -62,7 +62,7 @@ import { createArboretumClientFromCdaParams } from "@p8marketing/arboretum-sdk";
 - By providing contentful CDA client
 
 ```ts
-import { createArboretumClientFromCdaClient } from "@p8marketing/arboretum-sdk";
+import { createArboretumClientFromCdaClient } from "@bright.global/arboretum-sdk";
 import { createClient } from "contentful";
 
 const contentfulClient = createClient({
@@ -96,7 +96,7 @@ const contentfulClient = createClient({
 - By providing contentful CMA client (especially useful in contentful apps)
 
 ```ts
-import { createArboretumClientFromCma } from "@p8marketing/arboretum-sdk";
+import { createArboretumClientFromCma } from "@bright.global/arboretum-sdk";
 import { createClient } from "contentful-management";
 
 async () => {
