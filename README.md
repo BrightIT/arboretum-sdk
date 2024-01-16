@@ -1,5 +1,5 @@
 <h3 align="center">
-  <a href="https://p8.group">
+  <a href="https://www.bright.global/">
     <img src="./logo.svg">
   </a>
 </h3>
