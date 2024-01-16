@@ -1,5 +1,5 @@
 {
-  "name": "@p8marketing/arboretum-sdk",
+  "name": "@bright.global/arboretum-sdk",
   "version": "0.0.5",
   "license": "MIT",
   "description": "The sitemap for contentful",
@@ -39,7 +39,7 @@
     "type": "git",
     "url": "git+https://github.com/BrightIT/arboretum-sdk.git"
   },
-  "author": "Dacjan Naumowicz <d.naumowicz@p8.group>",
+  "author": "Dacjan Naumowicz <dacjan.naumowicz@bright.global>",
   "bugs": {
     "url": "https://github.com/BrightIT/arboretum-sdk/issues"
   },
