@@ -3,10 +3,7 @@
   "version": "0.0.7",
   "license": "MIT",
   "description": "The sitemap for contentful",
-  "dependencies": {
-    "contentful": "^9.2.5",
-    "contentful-management": "10.29.1"
-  },
+  "dependencies": {},
   "sideEffects": false,
   "devDependencies": {
     "@babel/preset-env": "^7.22.6",

@@ -1,6 +1,13 @@
-import { ContentfulClientApi, createClient } from "contentful";
-import { ArboretumClientConfigT } from "../../../arboretum-client";
+import {
+  ArboretumClientConfigT,
+  ContentfulClientApi,
+  CreateClientParams,
+} from "../../../arboretum-client";
 import { ContentfulClientT } from "../contentful-client";
+import { getLocales } from "./methods/get-locales";
+import { getContentTypes } from "./methods/get-content-types";
+import { getTags } from "./methods/get-tags";
+import { getEntries } from "./methods/get-entries";
 
 export const createContentfulClient = (
   config: ArboretumClientConfigT
@@ -21,11 +28,10 @@ export const createContentfulClient = (
       const previewHostOrUndefined = config.preview
         ? "preview.contentful.com"
         : undefined;
-      const clientApi = createClient({
+      return createCdaRestApiContentfulClient({
         ...config.contentful,
         host: previewHostOrUndefined,
       });
-      return clientFromCda(clientApi);
     }
     case "cma-client": {
       const { client } = config.contentful;
@@ -45,3 +51,12 @@ export const createContentfulClient = (
     }
   }
 };
+
+export const createCdaRestApiContentfulClient = (
+  config: CreateClientParams
+): ContentfulClientT => ({
+  getLocales: getLocales(config),
+  getContentTypes: getContentTypes(config),
+  getTags: getTags(config),
+  getEntries: getEntries(config),
+});

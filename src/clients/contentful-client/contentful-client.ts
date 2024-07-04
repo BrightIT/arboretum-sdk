@@ -1,5 +1,3 @@
-import { Entry, Locale, Tag } from "contentful";
-
 type EntriesQueryT = {
   limit?: number;
   skip?: number;
@@ -27,7 +25,7 @@ export type EntryT = {
       };
     }>;
   };
-  fields: Entry<any>["fields"];
+  fields: { [localeCode: string]: any };
   sys: {
     id: string;
     archivedVersion?: number;
@@ -53,42 +51,63 @@ export type TagT = {
   };
 };
 
-export type LocaleT = Pick<
-  Locale,
-  "code" | "default" | "fallbackCode" | "name"
->;
+export type LocaleT = {
+  code: string;
+  name: string;
+  default: boolean;
+  fallbackCode: string | null;
+};
 
 export type ContentTypeT = {
   sys: { id: string };
-  fields: Array<{ id: string; name: string; localized: boolean, type: string, linkType?: string, items?: { type?: string, linkType?: string} }>;
+  fields: Array<{
+    id: string;
+    name: string;
+    localized: boolean;
+    type: string;
+    linkType?: string;
+    items?: { type?: string; linkType?: string };
+  }>;
 };
 
+export type GetLocalesResponseT = {
+  skip: number;
+  limit: number;
+  total: number;
+  items: Array<LocaleT>;
+};
+
+export type GetContentTypesResponseT = {
+  skip: number;
+  limit: number;
+  total: number;
+  items: Array<ContentTypeT>;
+};
+
+export type GetTagsResponseT = {
+  skip: number;
+  limit: number;
+  total: number;
+  items: Array<TagT>;
+};
+
+export type GetEntriesResponseT = {
+  skip: number;
+  limit: number;
+  total: number;
+  items: Array<EntryT>;
+};
+
+// const a: GetEntriesResponseT =
+
 export type ContentfulClientT = {
-  getEntries: (query?: EntriesQueryT) => Promise<{
-    skip: number;
-    limit: number;
-    total: number;
-    items: Array<EntryT>;
-  }>;
+  getLocales: () => Promise<GetLocalesResponseT>;
 
-  getLocales: () => Promise<{
-    skip: number;
-    limit: number;
-    total: number;
-    items: Array<LocaleT>;
-  }>;
+  getContentTypes: (
+    query?: ContentTypesQueryT
+  ) => Promise<GetContentTypesResponseT>;
 
-  getContentTypes: (query?: ContentTypesQueryT) => Promise<{
-    skip: number;
-    limit: number;
-    total: number;
-    items: Array<ContentTypeT>;
-  }>;
+  getTags: (query?: TagsQueryT) => Promise<GetTagsResponseT>;
 
-  getTags: (query?: TagsQueryT) => Promise<{
-    skip: number;
-    limit: number;
-    total: number;
-    items: Array<TagT>;
-  }>;
+  getEntries: (query?: EntriesQueryT) => Promise<GetEntriesResponseT>;
 };

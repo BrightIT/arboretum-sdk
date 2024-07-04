@@ -1,10 +1,11 @@
-import { ContentfulClientApi, CreateClientParams } from "contentful";
 import { CachedDataT, SysIdT } from "./impl/arboretum-client.impl";
 import { Either } from "./utils/fp-utils";
-import { ContentfulEnvironmentAPI } from "contentful-management/dist/typings/create-environment-api";
 import {
+  ContentTypeT,
+  EntryT,
   LocaleT,
   StatusT,
+  TagT,
 } from "./clients/contentful-client/contentful-client";
 
 export type ArboretumClientOptions = {
@@ -31,6 +32,14 @@ export type ArboretumClientContentfulConfigOptionsT = {
   homePageTagId?: string;
 };
 
+export type ContentfulEnvironmentAPI = {
+  getEntries: (query?: any) => Promise<ContentfulCollection<EntryT>>;
+  getPublishedEntries: (query?: any) => Promise<ContentfulCollection<EntryT>>;
+  getLocales: () => Promise<ContentfulCollection<LocaleT>>;
+  getContentTypes: (query?: any) => Promise<ContentfulCollection<ContentTypeT>>;
+  getTags: (query?: any) => Promise<ContentfulCollection<TagT>>;
+};
+
 export type ArboretumClientConfigFromCmaT = {
   type: "cma-client";
   preview: boolean;
@@ -39,6 +48,20 @@ export type ArboretumClientConfigFromCmaT = {
     options: ArboretumClientContentfulConfigOptionsT;
   };
   options?: ArboretumClientOptions;
+};
+
+type ContentfulCollection<T> = {
+  total: number;
+  skip: number;
+  limit: number;
+  items: Array<T>;
+};
+
+export type ContentfulClientApi = {
+  getEntries: (query?: any) => Promise<ContentfulCollection<EntryT>>;
+  getLocales: () => Promise<ContentfulCollection<LocaleT>>;
+  getContentTypes: (query?: any) => Promise<ContentfulCollection<ContentTypeT>>;
+  getTags: (query?: any) => Promise<ContentfulCollection<TagT>>;
 };
 
 export type ArboretumClientConfigFromCdaT = {
@@ -51,10 +74,20 @@ export type ArboretumClientConfigFromCdaT = {
   options?: Pick<ArboretumClientOptions, "data" | "eagerly">;
 };
 
+export type CreateClientParams = {
+  space: string;
+  accessToken: string;
+  environment?: string;
+  host?: string;
+  retryOnError?: boolean;
+  timeout?: number;
+  retryLimit?: number;
+};
+
 export type ArboretumClientConfigFromCdaParamsT = {
   type: "cda-client-params";
   preview: boolean;
-  contentful: CreateClientParams & {
+  contentful: Omit<CreateClientParams, "host"> & {
     options: ArboretumClientContentfulConfigOptionsT;
   };
   options?: Pick<ArboretumClientOptions, "data" | "eagerly">;
