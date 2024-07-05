@@ -27,6 +27,7 @@ const getAllRedirectEntriesRecursively = async (
 
   return getAllEntriesRecursively(
     ctx.clientApi,
+    ctx.contentfulClientType,
     redirectContentType.id,
     skip,
     acc,

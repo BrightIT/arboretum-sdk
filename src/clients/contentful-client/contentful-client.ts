@@ -98,8 +98,6 @@ export type GetEntriesResponseT = {
   items: Array<EntryT>;
 };
 
-// const a: GetEntriesResponseT =
-
 export type ContentfulClientT = {
   getLocales: () => Promise<GetLocalesResponseT>;
 

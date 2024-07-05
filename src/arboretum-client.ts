@@ -58,6 +58,7 @@ type ContentfulCollection<T> = {
 };
 
 export type ContentfulClientApi = {
+  withAllLocales?: ContentfulClientApi;
   getEntries: (query?: any) => Promise<ContentfulCollection<EntryT>>;
   getLocales: () => Promise<ContentfulCollection<LocaleT>>;
   getContentTypes: (query?: any) => Promise<ContentfulCollection<ContentTypeT>>;

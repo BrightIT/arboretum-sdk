@@ -9,6 +9,7 @@ describe(getAllEntriesRecursively, () => {
   test("Handle case where there are no entries", async () => {
     const entries = await getAllEntriesRecursively(
       mockedContentfulEntriesClientApi(testContentTypeId, 0),
+      "cda-client",
       testContentTypeId,
       0,
       [],
@@ -23,6 +24,7 @@ describe(getAllEntriesRecursively, () => {
     const total = 10;
     const entries = await getAllEntriesRecursively(
       mockedContentfulEntriesClientApi(testContentTypeId, total),
+      "cda-client",
       testContentTypeId,
       0,
       [],
@@ -41,6 +43,7 @@ describe(getAllEntriesRecursively, () => {
     const total = 101;
     const entries = await getAllEntriesRecursively(
       mockedContentfulEntriesClientApi(testContentTypeId, total),
+      "cda-client",
       testContentTypeId,
       0,
       [],

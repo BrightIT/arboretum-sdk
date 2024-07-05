@@ -86,7 +86,9 @@ export type CachedDataT = Pick<
 
 export type ArboretumClientCtx = {
   preview: boolean;
-  contentfulClientType: ArboretumClientConfigT["type"];
+  contentfulClientType:
+    | ArboretumClientConfigT["type"]
+    | "cda-client-with-all-locales";
   lastUpdatedAt: string;
   clientApi: ContentfulClientT;
   cmaPreviewClientApi?: ContentfulClientT;
@@ -149,7 +151,10 @@ export const createArboretumClient = async (
     options: { ...options, includeEntryStatus },
     localeTagIdPrefix,
     pageHomeTagId: options.homePageTagId || pageHomeTagId,
-    contentfulClientType: config.type,
+    contentfulClientType:
+      config.type === "cda-client" && config.contentful.client.withAllLocales
+        ? "cda-client-with-all-locales"
+        : config.type,
     pageTagIdPrefix,
     cmaPreviewClientApi,
   };

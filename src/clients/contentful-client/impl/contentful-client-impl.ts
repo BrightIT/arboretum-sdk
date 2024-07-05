@@ -1,6 +1,5 @@
 import {
   ArboretumClientConfigT,
-  ContentfulClientApi,
   CreateClientParams,
 } from "../../../arboretum-client";
 import { ContentfulClientT } from "../contentful-client";
@@ -13,16 +12,17 @@ export const createContentfulClient = (
   config: ArboretumClientConfigT
 ): ContentfulClientT => {
   const configType = config.type;
-  const clientFromCda = (client: ContentfulClientApi) => ({
-    getEntries: client.getEntries,
-    getLocales: client.getLocales,
-    getContentTypes: client.getContentTypes,
-    getTags: client.getTags,
-  });
 
   switch (config.type) {
     case "cda-client": {
-      return clientFromCda(config.contentful.client);
+      const c = config.contentful.client;
+      const client = c.withAllLocales ? c.withAllLocales : c;
+      return {
+        getEntries: client.getEntries,
+        getLocales: client.getLocales,
+        getContentTypes: client.getContentTypes,
+        getTags: client.getTags,
+      };
     }
     case "cda-client-params": {
       const previewHostOrUndefined = config.preview

@@ -26,6 +26,7 @@ const filterOutNestedEntriesFieldsOtherThanSysEff =
 
 export const getAllEntriesRecursively = async (
   { getEntries }: Pick<ArboretumClientCtx["clientApi"], "getEntries">,
+  contentfulClientType: ArboretumClientCtx["contentfulClientType"],
   contentType: string,
   skip: number,
   acc: Array<EntryT>,
@@ -39,7 +40,10 @@ export const getAllEntriesRecursively = async (
     content_type: contentType,
     include: 0,
     select,
-    locale: "*",
+    locale:
+      contentfulClientType === "cda-client-with-all-locales"
+        ? undefined
+        : "*",
   });
 
   items.forEach((i) => {
@@ -50,12 +54,6 @@ export const getAllEntriesRecursively = async (
 
   acc.push(...items);
   return items.length >= limit
-    ? getAllEntriesRecursively(
-        { getEntries },
-        contentType,
-        skip + limit,
-        acc,
-        select
-      )
+    ? getAllEntriesRecursively({getEntries}, contentfulClientType, contentType, skip + limit, acc, select)
     : acc;
 };

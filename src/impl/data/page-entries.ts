@@ -28,6 +28,7 @@ const getAllPageEntriesRecursively = async (
 
   return getAllEntriesRecursively(
     { getEntries },
+    contentfulClientType,
     pageContentTypeOpt.id,
     skip,
     acc,
