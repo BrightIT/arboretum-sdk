@@ -119,6 +119,7 @@ export type ArboretumAliasT = ArboretumPageBaseT & {
 
 export type ArboretumPageT = ArboretumPageBaseT & {
   type: "page";
+  contentTypeId: string;
   slug: string;
   totalDirectChildrenCount: number;
   children?: Array<ArboretumPageNodeT>;

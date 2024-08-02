@@ -11,11 +11,14 @@ import { toArboretumPage } from './to-arboretum-page-adapter';
 
 const localeCode = 'en';
 
+const contentTypeId = "page";
+
 const toArboretumPageF = (options?: OptionsT) =>
   toArboretumPage(mockedLocalizedSitemap, localeCode, options);
 
 const arboretumPageRoot: ArboretumPageT = {
   type: 'page',
+  contentTypeId,
   id: mockedRoot.sys.id,
   localeCode,
   path: mockedRoot.path,
@@ -25,6 +28,7 @@ const arboretumPageRoot: ArboretumPageT = {
 
 const arboretumPagePage1: ArboretumPageT = {
   id: mockedPage1.sys.id,
+  contentTypeId,
   localeCode,
   path: mockedPage1.path,
   slug: mockedPage1.slug,
@@ -34,6 +38,7 @@ const arboretumPagePage1: ArboretumPageT = {
 
 const arboretumPagePage1_1: ArboretumPageT = {
   id: mockedPage1_1.sys.id,
+  contentTypeId,
   localeCode,
   path: mockedPage1_1.path,
   slug: mockedPage1_1.slug,
@@ -43,6 +48,7 @@ const arboretumPagePage1_1: ArboretumPageT = {
 
 const arboretumPage1_1_1: ArboretumPageT = {
   id: mockedPage1_1_1.sys.id,
+  contentTypeId,
   localeCode,
   path: mockedPage1_1_1.path,
   slug: mockedPage1_1_1.slug,
@@ -52,6 +58,7 @@ const arboretumPage1_1_1: ArboretumPageT = {
 
 const arboretumPage1_1_2: ArboretumPageT = {
   id: mockedPage1_1_2.sys.id,
+  contentTypeId,
   localeCode,
   path: mockedPage1_1_2.path,
   slug: mockedPage1_1_2.slug,

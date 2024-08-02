@@ -1,35 +1,35 @@
-import { EntryT } from '../../../clients/contentful-client/contentful-client';
-import { right } from '../../../utils/fp-utils';
-import { jsonStrigifyMapReplacer } from '../../../utils/json-stringify-map-replacer';
+import { EntryT } from "../../../clients/contentful-client/contentful-client";
+import { right } from "../../../utils/fp-utils";
+import { jsonStrigifyMapReplacer } from "../../../utils/json-stringify-map-replacer";
 import {
   ArboretumClientCtx,
   PageT,
   RedirectT,
-} from '../../arboretum-client.impl';
-import { buildLocalizedSitemap } from './build-localized-sitemap';
+} from "../../arboretum-client.impl";
+import { buildLocalizedSitemap } from "./build-localized-sitemap";
 import {
   mockedPages,
   mockedCircularReferencesPages,
   mockedPage1WithCircularReference,
   mockedRoot,
   mockedLocalizedSitemap,
-} from './__mocks__/mocked-localized-sitemap';
+} from "./__mocks__/mocked-localized-sitemap";
 
 const defaultLocale = {
-  code: 'en',
+  code: "en",
   default: true,
   fallbackCode: null,
-  name: 'English',
+  name: "English",
 };
 
-const pageContentTypeId = 'page';
-const pageContentTypeSlugFieldId = 'slug';
-const pageContentTypeChildPagesFieldId = 'childPages';
+const pageContentTypeId = "page";
+const pageContentTypeSlugFieldId = "slug";
+const pageContentTypeChildPagesFieldId = "childPages";
 
-const redirectContentTypeId = 'redirect';
-const redirectContentTypePage = 'page';
-const redirectContentTypePath = 'path';
-const redirectContentTypeType = 'type';
+const redirectContentTypeId = "redirect";
+const redirectContentTypePage = "page";
+const redirectContentTypePath = "path";
+const redirectContentTypeType = "type";
 
 const contentTypes = new Map([
   [
@@ -42,8 +42,8 @@ const contentTypes = new Map([
           {
             id: pageContentTypeSlugFieldId,
             localized: true,
-            name: 'Slug',
-            type: "Symbol"
+            name: "Slug",
+            type: "Symbol",
           },
         ],
         [
@@ -51,8 +51,8 @@ const contentTypes = new Map([
           {
             id: pageContentTypeChildPagesFieldId,
             localized: true,
-            name: 'Child Pages',
-            type: "Array"
+            name: "Child Pages",
+            type: "Array",
           },
         ],
       ]),
@@ -68,8 +68,8 @@ const contentTypes = new Map([
           {
             id: redirectContentTypePage,
             localized: true,
-            name: 'Page',
-            type: "Link"
+            name: "Page",
+            type: "Link",
           },
         ],
         [
@@ -77,8 +77,8 @@ const contentTypes = new Map([
           {
             id: redirectContentTypePath,
             localized: true,
-            name: 'Path',
-            type: "Symbol"
+            name: "Path",
+            type: "Symbol",
           },
         ],
         [
@@ -86,8 +86,8 @@ const contentTypes = new Map([
           {
             id: redirectContentTypeType,
             localized: true,
-            name: 'Type',
-            type: "Symbol"
+            name: "Type",
+            type: "Symbol",
           },
         ],
       ]),
@@ -95,7 +95,7 @@ const contentTypes = new Map([
   ],
 ]);
 
-const options: ArboretumClientCtx['options'] = {
+const options: ArboretumClientCtx["options"] = {
   pageContentTypes: {
     [pageContentTypeId]: {
       slugFieldId: pageContentTypeSlugFieldId,
@@ -112,12 +112,12 @@ const options: ArboretumClientCtx['options'] = {
 const pageToEntry = (page: PageT, tagsIds?: Array<string>): EntryT => ({
   sys: { id: page.sys.id, contentType: { sys: { id: pageContentTypeId } } },
   metadata: tagsIds
-    ? { tags: tagsIds.map(t => ({ sys: { id: t } })) }
+    ? { tags: tagsIds.map((t) => ({ sys: { id: t } })) }
     : undefined,
   fields: {
     [pageContentTypeSlugFieldId]: { [defaultLocale.code]: page.slug },
     [pageContentTypeChildPagesFieldId]: {
-      [defaultLocale.code]: page.childPages.map(cp => ({ sys: cp.sys })),
+      [defaultLocale.code]: page.childPages.map((cp) => ({ sys: cp.sys })),
     },
   },
 });
@@ -125,7 +125,7 @@ const pageToEntry = (page: PageT, tagsIds?: Array<string>): EntryT => ({
 const redirectToEntry = (page: RedirectT, tagsIds?: Array<string>): EntryT => ({
   sys: { id: page.sys.id, contentType: { sys: { id: redirectContentTypeId } } },
   metadata: tagsIds
-    ? { tags: tagsIds.map(t => ({ sys: { id: t } })) }
+    ? { tags: tagsIds.map((t) => ({ sys: { id: t } })) }
     : undefined,
   fields: {
     [redirectContentTypePage]: {
@@ -141,15 +141,15 @@ const redirectToEntry = (page: RedirectT, tagsIds?: Array<string>): EntryT => ({
 });
 
 describe(buildLocalizedSitemap, () => {
-  test('Not enough data to build sitemap', () => {
+  test("Not enough data to build sitemap", () => {
     const emptyData: Pick<
-      ArboretumClientCtx['data'],
-      | 'homePagesByTagId'
-      | 'pages'
-      | 'contentTypes'
-      | 'defaultLocaleCode'
-      | 'locales'
-      | 'redirects'
+      ArboretumClientCtx["data"],
+      | "homePagesByTagId"
+      | "pages"
+      | "contentTypes"
+      | "defaultLocaleCode"
+      | "locales"
+      | "redirects"
     > = {
       contentTypes,
       defaultLocaleCode: defaultLocale.code,
@@ -162,33 +162,33 @@ describe(buildLocalizedSitemap, () => {
       buildLocalizedSitemap(
         emptyData,
         { pageContentTypes: {} },
-        'pageHome',
-        defaultLocale,
-      )._tag,
-    ).toBe('Left');
+        "pageHome",
+        defaultLocale
+      )._tag
+    ).toBe("Left");
   });
 
-  test('Build localized sitemap', () => {
-    const pageHomeTagId: ArboretumClientCtx['pageHomeTagId'] = 'pagHome';
+  test("Build localized sitemap", () => {
+    const pageHomeTagId: ArboretumClientCtx["pageHomeTagId"] = "pagHome";
 
-    const pagesEntries = mockedPages.flatMap(page =>
-      page.type === 'page'
-        ? [pageToEntry(page, page.sys.id === 'root' ? [pageHomeTagId] : [])]
-        : [],
+    const pagesEntries = mockedPages.flatMap((page) =>
+      page.type === "page"
+        ? [pageToEntry(page, page.sys.id === "root" ? [pageHomeTagId] : [])]
+        : []
     );
 
-    const redirectsEntries = mockedPages.flatMap(page =>
-      page.type !== 'page' ? [redirectToEntry(page)] : [],
+    const redirectsEntries = mockedPages.flatMap((page) =>
+      page.type !== "page" ? [redirectToEntry(page)] : []
     );
 
     const data: Pick<
-      ArboretumClientCtx['data'],
-      | 'homePagesByTagId'
-      | 'pages'
-      | 'contentTypes'
-      | 'defaultLocaleCode'
-      | 'locales'
-      | 'redirects'
+      ArboretumClientCtx["data"],
+      | "homePagesByTagId"
+      | "pages"
+      | "contentTypes"
+      | "defaultLocaleCode"
+      | "locales"
+      | "redirects"
     > = {
       contentTypes,
       defaultLocaleCode: defaultLocale.code,
@@ -199,7 +199,7 @@ describe(buildLocalizedSitemap, () => {
           new Map([[pageHomeTagId, [{ sys: { id: mockedRoot.sys.id } }]]]),
         ],
       ]),
-      pages: new Map(pagesEntries.map(e => [e.sys.id, e])),
+      pages: new Map(pagesEntries.map((e) => [e.sys.id, e])),
       redirects: redirectsEntries,
     };
 
@@ -207,31 +207,31 @@ describe(buildLocalizedSitemap, () => {
       JSON.parse(
         JSON.stringify(
           buildLocalizedSitemap(data, options, pageHomeTagId, defaultLocale),
-          jsonStrigifyMapReplacer,
-        ),
-      ),
+          jsonStrigifyMapReplacer
+        )
+      )
     ).toMatchObject(
       JSON.parse(
-        JSON.stringify(right(mockedLocalizedSitemap), jsonStrigifyMapReplacer),
-      ),
+        JSON.stringify(right(mockedLocalizedSitemap), jsonStrigifyMapReplacer)
+      )
     );
   });
 
-  test('Handle reference cycles', () => {
-    const pageHomeTagId: ArboretumClientCtx['pageHomeTagId'] = 'pagHome';
+  test("Handle reference cycles", () => {
+    const pageHomeTagId: ArboretumClientCtx["pageHomeTagId"] = "pagHome";
 
-    const entries = mockedCircularReferencesPages.map(page =>
-      pageToEntry(page, page.sys.id === 'root' ? [pageHomeTagId] : []),
+    const entries = mockedCircularReferencesPages.map((page) =>
+      pageToEntry(page, page.sys.id === "root" ? [pageHomeTagId] : [])
     );
 
     const data: Pick<
-      ArboretumClientCtx['data'],
-      | 'homePagesByTagId'
-      | 'pages'
-      | 'contentTypes'
-      | 'defaultLocaleCode'
-      | 'locales'
-      | 'redirects'
+      ArboretumClientCtx["data"],
+      | "homePagesByTagId"
+      | "pages"
+      | "contentTypes"
+      | "defaultLocaleCode"
+      | "locales"
+      | "redirects"
     > = {
       contentTypes,
       defaultLocaleCode: defaultLocale.code,
@@ -242,12 +242,12 @@ describe(buildLocalizedSitemap, () => {
           new Map([[pageHomeTagId, [{ sys: { id: mockedRoot.sys.id } }]]]),
         ],
       ]),
-      pages: new Map(entries.map(e => [e.sys.id, e])),
+      pages: new Map(entries.map((e) => [e.sys.id, e])),
       redirects: [],
     };
 
     const expectedLocalizedSitemap = right({
-      root: { sys: mockedRoot.sys },
+      root: { sys: { id: mockedRoot.sys.id } },
       sitemap: new Map(
         [
           {
@@ -257,7 +257,7 @@ describe(buildLocalizedSitemap, () => {
             ],
           },
           { ...mockedPage1WithCircularReference, childPages: [] },
-        ].map(page => [page.sys.id, page]),
+        ].map((page) => [page.sys.id, page])
       ),
     });
 
@@ -265,13 +265,13 @@ describe(buildLocalizedSitemap, () => {
       JSON.parse(
         JSON.stringify(
           buildLocalizedSitemap(data, options, pageHomeTagId, defaultLocale),
-          jsonStrigifyMapReplacer,
-        ),
-      ),
+          jsonStrigifyMapReplacer
+        )
+      )
     ).toMatchObject(
       JSON.parse(
-        JSON.stringify(expectedLocalizedSitemap, jsonStrigifyMapReplacer),
-      ),
+        JSON.stringify(expectedLocalizedSitemap, jsonStrigifyMapReplacer)
+      )
     );
   });
 });

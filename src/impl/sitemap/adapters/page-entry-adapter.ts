@@ -43,6 +43,7 @@ export const pageEntryAdapter = (
         sys: {
           id: entry.sys.id,
           cmaOnlyStatus: entry.sys.cmaOnlyStatus,
+          contentTypeId: entry.sys.contentType.sys.id
         },
         metadata: entry.metadata,
         childPages:

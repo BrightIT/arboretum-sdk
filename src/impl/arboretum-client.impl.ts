@@ -41,6 +41,7 @@ export type PageT = {
   sys: {
     id: string;
     cmaOnlyStatus?: StatusT;
+    contentTypeId: string;
   };
   metadata?: MetadataT;
   parent: { sys: { id: string } } | undefined;
