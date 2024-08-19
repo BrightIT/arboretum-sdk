@@ -149,7 +149,11 @@ export const createArboretumClient = async (
   > = {
     preview: config.preview,
     clientApi,
-    options: { ...options, includeEntryStatus },
+    options: {
+      ...options,
+      includeEntryStatus,
+      sitemapRepresentation: config.options?.sitemapRepresentation,
+    },
     localeTagIdPrefix,
     pageHomeTagId: options.homePageTagId || pageHomeTagId,
     contentfulClientType:

@@ -24,6 +24,7 @@ const getAllPageEntriesRecursively = async (
     pageContentTypeOpt.slugFieldId,
     pageContentTypeOpt.childPagesFieldId,
     pageContentTypeOpt.titleFieldId,
+    pageContentTypeOpt.parentPageFieldId,
   ].flatMap((id) => (id ? [`fields.${id}`] : []));
 
   return getAllEntriesRecursively(

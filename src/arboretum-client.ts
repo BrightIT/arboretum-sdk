@@ -11,6 +11,7 @@ import {
 export type ArboretumClientOptions = {
   data?: CachedDataT;
   eagerly?: boolean;
+  sitemapRepresentation?: "parent-to-children" | "child-to-parent";
   includeEntryStatus?: boolean;
 };
 
@@ -20,6 +21,7 @@ export type ArboretumClientContentfulConfigOptionsT = {
       slugFieldId: string;
       titleFieldId?: string;
       childPagesFieldId?: string;
+      parentPageFieldId?: string;
     };
   };
   redirectContentType?: {
@@ -72,7 +74,10 @@ export type ArboretumClientConfigFromCdaT = {
     client: ContentfulClientApi;
     options: ArboretumClientContentfulConfigOptionsT;
   };
-  options?: Pick<ArboretumClientOptions, "data" | "eagerly">;
+  options?: Pick<
+    ArboretumClientOptions,
+    "data" | "eagerly" | "sitemapRepresentation"
+  >;
 };
 
 export type CreateClientParams = {
@@ -91,7 +96,10 @@ export type ArboretumClientConfigFromCdaParamsT = {
   contentful: Omit<CreateClientParams, "host"> & {
     options: ArboretumClientContentfulConfigOptionsT;
   };
-  options?: Pick<ArboretumClientOptions, "data" | "eagerly">;
+  options?: Pick<
+    ArboretumClientOptions,
+    "data" | "eagerly" | "sitemapRepresentation"
+  >;
 };
 
 export type ArboretumClientConfigT =
@@ -137,7 +145,7 @@ export type ArboretumClientOptionsT = Pick<
   ArboretumClientContentfulConfigOptionsT,
   "pageContentTypes" | "redirectContentType"
 > &
-  Pick<ArboretumClientOptions, "includeEntryStatus">;
+  Pick<ArboretumClientOptions, "includeEntryStatus" | "sitemapRepresentation">;
 
 export type ArboretumClientT = {
   homePage: (
