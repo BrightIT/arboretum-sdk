@@ -49,6 +49,7 @@ export type PageT = {
   slug: string;
   title?: string;
   childPages: Array<{ sys: { id: string } }>;
+  additionalFields?: { [key: string]: any };
 };
 export type RedirectT = {
   sys: {

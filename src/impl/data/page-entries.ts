@@ -20,41 +20,13 @@ const getAllPageEntriesRecursively = async (
   acc: Array<EntryT>,
   select?: string
 ): Promise<Array<EntryT>> => {
-  const fieldsSelect = [
-    pageContentTypeOpt.slugFieldId,
-    pageContentTypeOpt.childPagesFieldId,
-    pageContentTypeOpt.titleFieldId,
-    pageContentTypeOpt.parentPageFieldId,
-  ].flatMap((id) => (id ? [`fields.${id}`] : []));
-
   return getAllEntriesRecursively(
     { getEntries },
     contentfulClientType,
     pageContentTypeOpt.id,
     skip,
     acc,
-    /* For some reason select param causes errors in CMA. I'm getting the following response: 
-  {
-    "status": 400,
-    "statusText": "Bad Request",
-    "message": "The query you sent was invalid. Probably a filter or ordering specification is not applicable to the type of a field.",
-    "details": {
-      "errors": [
-        {
-          "name": "select",
-          "details": "Select is only applicable when querying a collection of entities."
-        }
-      ]
-    },
-    "request": {
-      "url": "/spaces/8h4rcnu50txt/environments/dacjan-test/public/entries",
-      "method": "get",
-      ...
-    },
-}*/
-    select || contentfulClientType === "cma-client"
-      ? undefined
-      : ["sys", "metadata", ...fieldsSelect].join(","),
+    select,
     pageContentTypeOpt.childPagesFieldId
       ? [pageContentTypeOpt.childPagesFieldId]
       : []
@@ -97,15 +69,26 @@ export const pageEntries = async (
   const pageContentTypes = Object.entries(options.pageContentTypes);
 
   const pageEntriesPromise = Promise.all(
-    pageContentTypes.map(([id, fieldIds]) =>
-      getAllPageEntriesRecursively(
+    pageContentTypes.map(([id, fieldIds]) => {
+      const fieldsSelect = [
+        fieldIds.slugFieldId,
+        fieldIds.childPagesFieldId,
+        fieldIds.titleFieldId,
+        fieldIds.parentPageFieldId,
+        ...(fieldIds.select || []),
+      ].flatMap((id) => (id ? [`fields.${id}`] : []));
+
+      const select = ["sys", "metadata", ...fieldsSelect].join(",");
+
+      return getAllPageEntriesRecursively(
         apiClient,
         ctx.contentfulClientType,
         { id, ...fieldIds },
         0,
-        []
-      )
-    )
+        [],
+        select
+      );
+    })
   );
   /*
     This is woraround. Published entries from CMA (the same with CDA and CPA)

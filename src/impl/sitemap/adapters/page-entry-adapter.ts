@@ -1,4 +1,4 @@
-import { PageT } from "../../arboretum-client.impl";
+import { ArboretumClientCtx, PageT } from "../../arboretum-client.impl";
 import {
   ContentTypeT,
   EntryT,
@@ -8,7 +8,11 @@ import { SitemapDataT } from "../../data/sitemap-data";
 import { localizeField } from "../helpers/localize-contentful-field";
 
 export const pageEntryAdapter = (
-  data: Pick<SitemapDataT, "locales" | "defaultLocaleCode" | "pages">,
+  data: Pick<
+    SitemapDataT,
+    "locales" | "defaultLocaleCode" | "pages" | "contentTypes"
+  >,
+  options: Pick<ArboretumClientCtx["options"], "pageContentTypes">,
   slugField: ContentTypeT["fields"][number],
   titleField: ContentTypeT["fields"][number] | undefined,
   childrenRefs: PageT["childPages"],
@@ -27,6 +31,23 @@ export const pageEntryAdapter = (
     ? fieldValue<string>(titleField.localized, entry.fields[titleField.id])
     : undefined;
 
+  const contentTypeId = entry.sys.contentType.sys.id;
+
+  const additionalFields = (
+    options.pageContentTypes[contentTypeId].select || []
+  ).reduce((acc, fieldId) => {
+    const contentType = data.contentTypes.get(contentTypeId);
+    if (contentType) {
+      const field = contentType.fields.get(fieldId);
+      const value = field
+        ? fieldValue(field.localized, entry.fields[field.id])
+        : undefined;
+      acc[fieldId] = value;
+    }
+
+    return acc;
+  }, {} as { [key: string]: any });
+
   return slug
     ? {
         type: "page",
@@ -37,13 +58,14 @@ export const pageEntryAdapter = (
         sys: {
           id: entry.sys.id,
           cmaOnlyStatus: entry.sys.cmaOnlyStatus,
-          contentTypeId: entry.sys.contentType.sys.id,
+          contentTypeId,
         },
         metadata: entry.metadata,
         childPages:
           childrenRefs?.flatMap((childPage) =>
             childPage?.sys?.id ? [{ sys: { id: childPage?.sys.id } }] : []
           ) || [],
+        additionalFields,
       }
     : undefined;
 };

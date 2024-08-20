@@ -175,6 +175,7 @@ const buildLocalizedSitemapArrRecursively = (
   const page = slugField
     ? pageEntryAdapter(
         data,
+        options,
         slugField,
         titleField,
         childrenRefs,

@@ -39,11 +39,28 @@ export const getAllEntriesRecursively = async (
     skip,
     content_type: contentType,
     include: 0,
-    select,
+    /* For some reason select param causes errors in CMA. I'm getting the following response: 
+  {
+    "status": 400,
+    "statusText": "Bad Request",
+    "message": "The query you sent was invalid. Probably a filter or ordering specification is not applicable to the type of a field.",
+    "details": {
+      "errors": [
+        {
+          "name": "select",
+          "details": "Select is only applicable when querying a collection of entities."
+        }
+      ]
+    },
+    "request": {
+      "url": "/spaces/8h4rcnu50txt/environments/dacjan-test/public/entries",
+      "method": "get",
+      ...
+    },
+}*/
+    select: contentfulClientType !== "cma-client" ? select : undefined,
     locale:
-      contentfulClientType === "cda-client-with-all-locales"
-        ? undefined
-        : "*",
+      contentfulClientType === "cda-client-with-all-locales" ? undefined : "*",
   });
 
   items.forEach((i) => {
@@ -54,6 +71,13 @@ export const getAllEntriesRecursively = async (
 
   acc.push(...items);
   return items.length >= limit
-    ? getAllEntriesRecursively({getEntries}, contentfulClientType, contentType, skip + limit, acc, select)
+    ? getAllEntriesRecursively(
+        { getEntries },
+        contentfulClientType,
+        contentType,
+        skip + limit,
+        acc,
+        select
+      )
     : acc;
 };

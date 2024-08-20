@@ -22,6 +22,7 @@ export type ArboretumClientContentfulConfigOptionsT = {
       titleFieldId?: string;
       childPagesFieldId?: string;
       parentPageFieldId?: string;
+      select?: Array<string>
     };
   };
   redirectContentType?: {
@@ -132,6 +133,7 @@ export type ArboretumPageT = ArboretumPageBaseT & {
   totalDirectChildrenCount: number;
   children?: Array<ArboretumPageNodeT>;
   ancestors?: Array<Omit<ArboretumPageT, "children" | "ancestors">>;
+  additionalFields?: {[key: string]: any}
 };
 
 export type ArboretumPageNodeT =
