@@ -22,4 +22,5 @@ export const toArboretumPageWithMissingData =
     children,
     ancestors,
     additionalFields: page.additionalFields,
+    metadata: page.metadata
   });

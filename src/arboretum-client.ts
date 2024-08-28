@@ -1,4 +1,4 @@
-import { CachedDataT, SysIdT } from "./impl/arboretum-client.impl";
+import { CachedDataT, MetadataT, SysIdT } from "./impl/arboretum-client.impl";
 import { Either } from "./utils/fp-utils";
 import {
   ContentTypeT,
@@ -114,6 +114,7 @@ type ArboretumPageBaseT = {
   path: string;
   title?: string;
   cmaOnlyStatus?: StatusT;
+  metadata?: MetadataT;
 };
 
 export type ArboretumRedirectT = ArboretumPageBaseT & {

@@ -11,4 +11,5 @@ export const redirectToArboretumPage =
     path: redirect.path,
     cmaOnlyStatus: redirect.sys.cmaOnlyStatus,
     title: redirect.title,
+    metadata: redirect.metadata
   });
