@@ -75,6 +75,63 @@ const findPageFieldF =
       : undefined;
   };
 
+export const buildPage = (
+  data: Pick<
+    SitemapDataT,
+    "locales" | "defaultLocaleCode" | "pages" | "contentTypes"
+  >,
+  options: ArboretumClientCtx["options"],
+  childrenRefsByPageId: Map<string, Array<{ sys: { id: string } }>> | undefined,
+  locale: LocaleT,
+  parent: (NonNullable<PageT["parent"]> & { path: string }) | undefined,
+  pageEntry: EntryT
+): PageT | undefined => {
+  const pageContentTypeConfig =
+    options.pageContentTypes[pageEntry.sys.contentType.sys.id];
+
+  const findPageField = findPageFieldF(
+    data,
+    options,
+    pageEntry.sys.contentType.sys.id
+  );
+
+  const slugField = findPageField(pageContentTypeConfig.slugFieldId);
+
+  const titleField = pageContentTypeConfig.titleFieldId
+    ? findPageField(pageContentTypeConfig.titleFieldId)
+    : undefined;
+
+  const childPagesField = pageContentTypeConfig.childPagesFieldId
+    ? findPageField(pageContentTypeConfig.childPagesFieldId)
+    : undefined;
+
+  const fieldValue = localizeField(data, locale);
+
+  const childrenRefs = childrenRefsByPageId
+    ? childrenRefsByPageId.get(pageEntry.sys.id) || []
+    : childPagesField
+    ? fieldValue<Array<{ sys?: { id?: string } }>>(
+        childPagesField.localized,
+        pageEntry.fields[childPagesField.id]
+      )?.flatMap((childPage) =>
+        childPage?.sys?.id ? [{ sys: { id: childPage?.sys.id } }] : []
+      ) || []
+    : [];
+
+  return slugField
+    ? pageEntryAdapter(
+        data,
+        options,
+        slugField,
+        titleField,
+        childrenRefs,
+        locale,
+        parent,
+        pageEntry
+      )
+    : undefined;
+};
+
 const getChildrenRefsByParentId = (
   data: Pick<
     ArboretumClientCtx["data"],
@@ -140,50 +197,15 @@ const buildLocalizedSitemapArrRecursively = (
   acc: Map<PageIdT, PageT | RedirectT>
 ): Map<PageIdT, PageT | RedirectT> => {
   const { pages } = data;
-  const pageContentTypeConfig =
-    options.pageContentTypes[pageEntry.sys.contentType.sys.id];
 
-  const findPageField = findPageFieldF(
+  const page = buildPage(
     data,
     options,
-    pageEntry.sys.contentType.sys.id
+    childrenRefsByPageId,
+    locale,
+    parent,
+    pageEntry
   );
-
-  const slugField = findPageField(pageContentTypeConfig.slugFieldId);
-
-  const titleField = pageContentTypeConfig.titleFieldId
-    ? findPageField(pageContentTypeConfig.titleFieldId)
-    : undefined;
-
-  const childPagesField = pageContentTypeConfig.childPagesFieldId
-    ? findPageField(pageContentTypeConfig.childPagesFieldId)
-    : undefined;
-
-  const fieldValue = localizeField(data, locale);
-
-  const childrenRefs = childrenRefsByPageId
-    ? childrenRefsByPageId.get(pageEntry.sys.id) || []
-    : childPagesField
-    ? fieldValue<Array<{ sys?: { id?: string } }>>(
-        childPagesField.localized,
-        pageEntry.fields[childPagesField.id]
-      )?.flatMap((childPage) =>
-        childPage?.sys?.id ? [{ sys: { id: childPage?.sys.id } }] : []
-      ) || []
-    : [];
-
-  const page = slugField
-    ? pageEntryAdapter(
-        data,
-        options,
-        slugField,
-        titleField,
-        childrenRefs,
-        locale,
-        parent,
-        pageEntry
-      )
-    : undefined;
 
   if (page) {
     let validChildPages = page.childPages.filter(

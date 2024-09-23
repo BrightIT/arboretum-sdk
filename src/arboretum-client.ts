@@ -22,7 +22,7 @@ export type ArboretumClientContentfulConfigOptionsT = {
       titleFieldId?: string;
       childPagesFieldId?: string;
       parentPageFieldId?: string;
-      select?: Array<string>
+      select?: Array<string>;
     };
   };
   redirectContentType?: {
@@ -134,7 +134,7 @@ export type ArboretumPageT = ArboretumPageBaseT & {
   totalDirectChildrenCount: number;
   children?: Array<ArboretumPageNodeT>;
   ancestors?: Array<Omit<ArboretumPageT, "children" | "ancestors">>;
-  additionalFields?: {[key: string]: any}
+  additionalFields?: { [key: string]: any };
 };
 
 export type ArboretumPageNodeT =
@@ -196,4 +196,17 @@ export type ArboretumClientT = {
     regenerationInProgress: boolean;
   };
   cachedData: () => CachedDataT;
+  orphanedPages: (options?: {
+    limit?: number;
+    skip?: number;
+    localeCode?: string;
+  }) => Either<
+    string,
+    Array<
+      Omit<
+        ArboretumPageT,
+        "path" | "totalDirectChildrenCount" | "ancestors" | "children"
+      >
+    >
+  >;
 };
