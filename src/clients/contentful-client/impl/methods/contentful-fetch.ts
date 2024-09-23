@@ -25,7 +25,7 @@ const contentfulFetchWithRetires = <T>(
       (res.status === 429 || res.status === 500)
     ) {
       const delay = getRetryDelay(retry);
-      const msg = `Waiting for ${delay}ms before retrying... (retry: ${delay}/${retryLimit})`;
+      const msg = `Waiting for ${delay}ms before retrying... (retry: ${retry + 1}/${retryLimit})`;
       if (res.status === 500) {
         console.log(`[warning] Internal server error occurred. ${msg}`);
       } else if (res.status === 429) {
