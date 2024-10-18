@@ -58,13 +58,16 @@ const cmaOnlyEntriesStatusMap = async (
 };
 
 export const pageEntries = async (
-  ctx: Pick<ArboretumClientCtx, "options" | "contentfulClientType" | "preview">,
+  ctx: Pick<
+    ArboretumClientCtx,
+    "options" | "contentfulClientType" | "preview" | "pageHomeTagId"
+  >,
   apiClient: Pick<ArboretumClientCtx["clientApi"], "getEntries">,
   cmaPreviewClientApi?: Pick<
     NonNullable<ArboretumClientCtx["cmaPreviewClientApi"]>,
     "getEntries"
   >
-): Promise<EntriesT> => {
+): Promise<{ allPages: EntriesT; homePages: Array<EntryT> }> => {
   const { options } = ctx;
   const pageContentTypes = Object.entries(options.pageContentTypes);
 
@@ -111,14 +114,25 @@ export const pageEntries = async (
     statusRecordPromise,
   ]);
 
-  return arrayToMap<EntryT, EntryT>((e) => e.sys.id)((entry) => {
-    const cmaOnlyStatus =
-      ctx.contentfulClientType === "cma-client"
-        ? entryStatus(entry.sys) || cmaOnlyStatusRecord.get(entry.sys.id)
-        : undefined;
-    if (cmaOnlyStatus) {
-      entry.sys = { ...entry.sys, cmaOnlyStatus };
-    }
-    return entry;
-  })(pageEntries.flat());
+  let homePages: Array<EntryT> = [];
+
+  const allPages = new Map(
+    pageEntries.flat().map((entry) => {
+      if (
+        entry.metadata?.tags.find((t) => t.sys.id.startsWith(ctx.pageHomeTagId))
+      ) {
+        homePages.push(entry);
+      }
+      const cmaOnlyStatus =
+        ctx.contentfulClientType === "cma-client"
+          ? entryStatus(entry.sys) || cmaOnlyStatusRecord.get(entry.sys.id)
+          : undefined;
+      if (cmaOnlyStatus) {
+        entry.sys = { ...entry.sys, cmaOnlyStatus };
+      }
+      return [entry.sys.id, entry];
+    })
+  );
+
+  return { allPages, homePages };
 };
