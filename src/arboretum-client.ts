@@ -137,10 +137,23 @@ export type ArboretumPageT = ArboretumPageBaseT & {
   additionalFields?: { [key: string]: any };
 };
 
+export type OrphanedArboretumPageT = Omit<
+  ArboretumPageT,
+  "path" | "totalDirectChildrenCount" | "ancestors" | "children"
+>;
+
+export type OrphanedArboretumPageSearchResultT = OrphanedArboretumPageT & {
+  searchScore: number;
+};
+
 export type ArboretumPageNodeT =
   | ArboretumPageT
   | ArboretumRedirectT
   | ArboretumAliasT;
+
+export type ArboretumPageSearchResultNodeT = ArboretumPageNodeT & {
+  searchScore: number;
+};
 
 export type OptionsT = { withChildren?: boolean; withAncestors?: boolean };
 
@@ -187,7 +200,7 @@ export type ArboretumClientT = {
     phrase: string,
     localeCode?: string,
     limit?: number
-  ) => Array<ArboretumPageNodeT>;
+  ) => Array<ArboretumPageSearchResultNodeT>;
   status: () => {
     lastUpdatedAt: string;
     pagesCount: number;
@@ -200,13 +213,10 @@ export type ArboretumClientT = {
     limit?: number;
     skip?: number;
     localeCode?: string;
-  }) => Either<
-    string,
-    Array<
-      Omit<
-        ArboretumPageT,
-        "path" | "totalDirectChildrenCount" | "ancestors" | "children"
-      >
-    >
-  >;
+  }) => Either<string, Array<OrphanedArboretumPageT>>;
+  searchOrphanedPages: (
+    phrase: string,
+    localeCode?: string,
+    limit?: number
+  ) => Array<OrphanedArboretumPageSearchResultT>;
 };

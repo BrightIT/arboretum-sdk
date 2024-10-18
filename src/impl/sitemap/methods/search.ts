@@ -1,91 +1,39 @@
 import {
   ArboretumClientT,
-  ArboretumPageNodeT,
-} from '../../../arboretum-client';
-import { stringSimilarity } from '../../../utils/string-similarity';
-import {
-  ArboretumClientCtx,
-  LocalizedSitemapT,
-  PageT,
-  RedirectT,
-} from '../../arboretum-client.impl';
-import { localizedSitemapFromCacheOrBuildEff } from '../helpers/build-localized-sitemap';
-import { toArboretumPageWithMissingData } from '../adapters/to-arboretum-page-with-missing-data-adapter';
-import { redirectToArboretumPage } from '../adapters/redirect-to-arboretum-page-adapter';
-
-const minPhraseSimilarity = 0.4;
-const defaultLimit = 20;
-
-type PageSearchResultT = { phraseSimilarity: number; page: ArboretumPageNodeT };
+  ArboretumPageT,
+  ArboretumRedirectT,
+} from "../../../arboretum-client";
+import { phraseSimilarity } from "../../../utils/phrase-similarity";
+import { ArboretumClientCtx } from "../../arboretum-client.impl";
+import { CONSTANTS } from "../../constants";
+import { pages } from "./pages";
 
 const pagePhraseSimilarity = (
-  page: PageT,
-  path: string,
-  phrase: string,
+  page: Pick<ArboretumPageT, "id" | "slug" | "path" | "title">,
+  phrase: string
 ): number => {
-  const slugSimilarity = stringSimilarity(phrase, page.slug);
-  const pathSimilarity = stringSimilarity(phrase, path);
-  const idSimilarity = stringSimilarity(phrase, page.sys.id);
-  return Math.max(...[slugSimilarity, pathSimilarity, idSimilarity]);
+  const slugSimilarity = phraseSimilarity(phrase, page.slug);
+  const pathSimilarity = phraseSimilarity(phrase, page.path);
+  const idSimilarity = phraseSimilarity(phrase, page.id);
+  const titleSimilarity = page.title ? phraseSimilarity(phrase, page.title) : 0;
+  return Math.max(
+    slugSimilarity,
+    pathSimilarity,
+    idSimilarity,
+    titleSimilarity
+  );
 };
 
 const redirectPhraseSimilarity = (
-  redirect: RedirectT,
-  phrase: string,
+  redirect: Pick<ArboretumRedirectT, "id" | "path" | "title">,
+  phrase: string
 ): number => {
-  const pathSimilarity = stringSimilarity(phrase, redirect.path);
-  const idSimilarity = stringSimilarity(phrase, redirect.sys.id);
-  return Math.max(...[pathSimilarity, idSimilarity]);
-};
-
-const localizedRecursiveSearch = (
-  localeCode: string,
-  localizedSitemap: LocalizedSitemapT,
-  phrase: string,
-  parentPath: string,
-  currentPage: PageT | RedirectT,
-): Array<PageSearchResultT> => {
-  const getPath = (page: PageT) =>
-    page.sys.id === localizedSitemap.root.sys.id
-      ? parentPath
-      : parentPath + '/' + page.slug;
-  const phraseSimilarity =
-    currentPage.type === 'page'
-      ? pagePhraseSimilarity(currentPage, getPath(currentPage), phrase)
-      : redirectPhraseSimilarity(currentPage, phrase);
-
-  const childrenResults =
-    currentPage.type === 'page'
-      ? currentPage.childPages.flatMap(({ sys: { id } }) => {
-          const childPage = localizedSitemap.sitemap.get(id);
-          const path = getPath(currentPage);
-          return childPage
-            ? localizedRecursiveSearch(
-                localeCode,
-                localizedSitemap,
-                phrase,
-                path,
-                childPage,
-              )
-            : [];
-        })
-      : [];
-  const res: Array<PageSearchResultT> = [];
-  if (phraseSimilarity >= minPhraseSimilarity) {
-    res.push({
-      phraseSimilarity,
-      page:
-        currentPage.type === 'page'
-          ? toArboretumPageWithMissingData(localeCode)(
-              currentPage,
-              undefined,
-              undefined,
-            )
-          : redirectToArboretumPage(localeCode)(currentPage),
-    });
-  }
-  res.push(...childrenResults);
-  return res;
+  const pathSimilarity = phraseSimilarity(phrase, redirect.path);
+  const idSimilarity = phraseSimilarity(phrase, redirect.id);
+  const titleSimilarity = redirect.title
+    ? phraseSimilarity(phrase, redirect.title)
+    : 0;
+  return Math.max(pathSimilarity, idSimilarity, titleSimilarity);
 };
 
 // Primitive implementation that can be inefficient for large sitemaps
@@ -93,33 +41,27 @@ export const search =
   (
     ctx: Pick<
       ArboretumClientCtx,
-      'data' | 'sitemap' | 'options' | 'pageHomeTagId'
-    >,
-  ): ArboretumClientT['search'] =>
+      "data" | "sitemap" | "options" | "pageHomeTagId"
+    >
+  ): ArboretumClientT["search"] =>
   (phrase, localeCode, limit) => {
-    return [...ctx.data.locales.values()]
-      .filter(locale => (localeCode ? locale.code === localeCode : true))
-      .flatMap(locale => {
-        const sitemap = localizedSitemapFromCacheOrBuildEff(ctx, locale);
+    const allPages = pages(ctx)({ localeCode });
 
-        const homePage =
-          sitemap._tag === 'Right'
-            ? sitemap.right.sitemap.get(sitemap.right.root.sys.id)
-            : undefined;
-
-        if (sitemap._tag === 'Right' && homePage) {
-          return localizedRecursiveSearch(
-            locale.code,
-            sitemap.right,
-            phrase,
-            `/${locale.code}`,
-            homePage,
-          );
-        } else {
-          return [];
-        }
-      })
-      .sort((a, b) => b.phraseSimilarity - a.phraseSimilarity)
-      .slice(0, limit || defaultLimit)
-      .map(({ page }) => page);
+    if (allPages._tag === "Right") {
+      return allPages.right
+        .map((page) => {
+          const searchScore =
+            page.type === "page"
+              ? pagePhraseSimilarity(page, phrase)
+              : redirectPhraseSimilarity(page, phrase);
+          return { ...page, searchScore };
+        })
+        .filter(
+          ({ searchScore }) => searchScore >= CONSTANTS.search.minSearchScore
+        )
+        .sort((a, b) => b.searchScore - a.searchScore)
+        .slice(0, limit);
+    } else {
+      return [];
+    }
   };

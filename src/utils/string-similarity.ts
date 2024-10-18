@@ -9,10 +9,10 @@
 export function stringSimilarity(
   str1: string,
   str2: string,
-  gramSize: number = 2,
+  gramSize: number = 2
 ): number {
   function getNGrams(s: string, len: number) {
-    s = ' '.repeat(len - 1) + s.toLowerCase() + ' '.repeat(len - 1);
+    s = " ".repeat(len - 1) + s.toLowerCase() + " ".repeat(len - 1);
     let v = new Array(s.length - len + 1);
     for (let i = 0; i < v.length; i++) {
       v[i] = s.slice(i, i + len);

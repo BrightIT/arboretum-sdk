@@ -5,7 +5,6 @@ import {
   ArboretumClientContentfulConfigOptionsT,
   ArboretumClientConfigT,
   ArboretumClientT,
-  ArboretumClientOptions,
   ArboretumClientOptionsT,
 } from "../arboretum-client";
 import {
@@ -20,7 +19,6 @@ import { pagesByTagId } from "./sitemap/methods/pages-by-tag-id";
 import { pagesByIds } from "./sitemap/methods/pages-by-ids";
 import { pagesByPaths } from "./sitemap/methods/pages-by-paths";
 import { regenerate } from "./sitemap/methods/regenerate";
-import { search } from "./sitemap/methods/search";
 import { status } from "./sitemap/methods/status";
 import { Either, right } from "../utils/fp-utils";
 import { pages } from "./sitemap/methods/pages";
@@ -29,6 +27,8 @@ import { cachedData } from "./sitemap/methods/cached-data";
 import { buildPagesByTagEagerly } from "./sitemap/helpers/build-pages-by-tag-eagerly";
 import { homePage } from "./sitemap/methods/home-page";
 import { orphanedPages } from "./sitemap/methods/orphaned-pages";
+import { searchOrphanedPages } from "./sitemap/methods/search-orphaned-pages";
+import { search } from "./sitemap/methods/search";
 
 const pageTagIdPrefix = "page";
 const pageHomeTagId = `${pageTagIdPrefix}Home`;
@@ -208,6 +208,7 @@ export const createArboretumClient = async (
         status: status(ctx),
         cachedData: cachedData(ctx),
         orphanedPages: orphanedPages(ctx),
+        searchOrphanedPages: searchOrphanedPages(ctx),
       },
       warnings: dataE.right.warnings,
     };
