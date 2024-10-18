@@ -11,7 +11,7 @@ import {
 export type ArboretumClientOptions = {
   data?: CachedDataT;
   eagerly?: boolean;
-  sitemapRepresentation?: "parent-to-children" | "child-to-parent";
+  pageRelations?: "parent-to-children" | "child-to-parent";
   includeEntryStatus?: boolean;
 };
 
@@ -77,7 +77,7 @@ export type ArboretumClientConfigFromCdaT = {
   };
   options?: Pick<
     ArboretumClientOptions,
-    "data" | "eagerly" | "sitemapRepresentation"
+    "data" | "eagerly" | "pageRelations"
   >;
 };
 
@@ -99,7 +99,7 @@ export type ArboretumClientConfigFromCdaParamsT = {
   };
   options?: Pick<
     ArboretumClientOptions,
-    "data" | "eagerly" | "sitemapRepresentation"
+    "data" | "eagerly" | "pageRelations"
   >;
 };
 
@@ -161,7 +161,7 @@ export type ArboretumClientOptionsT = Pick<
   ArboretumClientContentfulConfigOptionsT,
   "pageContentTypes" | "redirectContentType"
 > &
-  Pick<ArboretumClientOptions, "includeEntryStatus" | "sitemapRepresentation">;
+  Pick<ArboretumClientOptions, "includeEntryStatus" | "pageRelations">;
 
 export type ArboretumClientT = {
   homePage: (

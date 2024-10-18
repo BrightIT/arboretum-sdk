@@ -271,7 +271,7 @@ export const buildLocalizedSitemap = (
 
   if (homePageEntry) {
     const childrenRefsByPageId =
-      options.sitemapRepresentation === "child-to-parent"
+      options.pageRelations === "child-to-parent"
         ? getChildrenRefsByParentId(data, locale, options)
         : undefined;
 

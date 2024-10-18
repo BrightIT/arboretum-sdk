@@ -154,7 +154,7 @@ export const createArboretumClient = async (
     options: {
       ...options,
       includeEntryStatus,
-      sitemapRepresentation: config.options?.sitemapRepresentation,
+      pageRelations: config.options?.pageRelations,
     },
     localeTagIdPrefix,
     pageHomeTagId: options.homePageTagId || pageHomeTagId,
