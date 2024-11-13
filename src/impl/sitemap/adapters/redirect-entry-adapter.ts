@@ -39,7 +39,7 @@ export const redirectEntryAdapter = (
   return pageSysId && path && (type === "redirect" || type === "alias")
     ? {
         page: { sys: { id: pageSysId } },
-        path: parent.path + path,
+        path: parent.path + (path.startsWith("/") ? path : `/${path}`),
         title: title || undefined,
         metadata: entry.metadata,
         type,
