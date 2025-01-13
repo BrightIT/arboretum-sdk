@@ -2,7 +2,6 @@ import { CreateClientParams } from "../../../../arboretum-client";
 import { getRandomNumber } from "../../../../utils/get-rendom-number";
 import {
   DEFAULT_ENVIRONMENT,
-  DEFAULT_HOST,
   DEFAULT_RETRY_LIMIT,
   DEFAULT_RETRY_ON_ERROR,
 } from "../constants";
@@ -48,8 +47,8 @@ const contentfulFetchWithRetires = <T>(
 export const contentfulFetch =
   (config: CreateClientParams) =>
   <T>(endpoint: string, query: Record<string, string | number>): Promise<T> => {
-    const { space, accessToken } = config;
-    const host = config.host || DEFAULT_HOST;
+    const { space, accessToken, host } = config;
+    
     const environment = config.environment || DEFAULT_ENVIRONMENT;
     const params = new URLSearchParams();
     params.append("access_token", accessToken);

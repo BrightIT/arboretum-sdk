@@ -1,5 +1,3 @@
-import { CachedDataT, MetadataT, SysIdT } from "./impl/arboretum-client.impl";
-import { Either } from "./utils/fp-utils";
 import {
   ContentTypeT,
   EntryT,
@@ -7,6 +5,8 @@ import {
   StatusT,
   TagT,
 } from "./clients/contentful-client/contentful-client";
+import { CachedDataT, MetadataT, SysIdT } from "./impl/arboretum-client.impl";
+import { Either } from "./utils/fp-utils";
 
 export type ArboretumClientOptions = {
   data?: CachedDataT;
@@ -85,7 +85,7 @@ export type CreateClientParams = {
   space: string;
   accessToken: string;
   environment?: string;
-  host?: string;
+  host: string;
   retryOnError?: boolean;
   timeout?: number;
   retryLimit?: number;
@@ -97,6 +97,10 @@ export type ArboretumClientConfigFromCdaParamsT = {
   contentful: Omit<CreateClientParams, "host"> & {
     options: ArboretumClientContentfulConfigOptionsT;
   };
+  hosts?: {
+    preview: string;
+    published: string;
+  } | undefined;
   options?: Pick<
     ArboretumClientOptions,
     "data" | "eagerly" | "pageRelations"
