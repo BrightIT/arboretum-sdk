@@ -227,7 +227,7 @@ export const createArboretumClientFromCdaClient = (
 export const createArboretumClientFromCdaParams = (
   config: Pick<
     ArboretumClientConfigFromCdaParamsT,
-    "contentful" | "preview" | "options"
+    "contentful" | "preview" | "options" | "hosts"
   >
 ) => createArboretumClient({ ...config, type: "cda-client-params" });
 
