@@ -1,6 +1,6 @@
 {
   "name": "@bright.global/arboretum-sdk",
-  "version": "0.1.0-rc.9",
+  "version": "0.1.0-rc.10",
   "license": "MIT",
   "description": "The sitemap for contentful",
   "dependencies": {},
