@@ -3,6 +3,12 @@ import {
   CreateClientParams,
 } from "../../../arboretum-client";
 import { ContentfulClientT } from "../contentful-client";
+import {
+  EU_PREVIEW_HOST,
+  EU_PUBLISHED_HOST,
+  PREVIEW_HOST,
+  PUBLISHED_HOST,
+} from "./constants";
 import { getContentTypes } from "./methods/get-content-types";
 import { getEntries } from "./methods/get-entries";
 import { getLocales } from "./methods/get-locales";
@@ -25,14 +31,17 @@ export const createContentfulClient = (
       };
     }
     case "cda-client-params": {
-      const PREVIEW_HOST: string = config.hosts?.preview ?? "preview.contentful.com";
-      const PUBLISHED_HOST: string = config.hosts?.published ?? "cdn.contentful.com";
+      const host = config.preview
+        ? config.contentful.euDataResidency
+          ? EU_PREVIEW_HOST
+          : PREVIEW_HOST
+        : config.contentful.euDataResidency
+        ? EU_PUBLISHED_HOST
+        : PUBLISHED_HOST;
 
-      const host = config.preview ? PREVIEW_HOST : PUBLISHED_HOST
-  
       return createCdaRestApiContentfulClient({
         ...config.contentful,
-        host: host,
+        host,
       });
     }
     case "cma-client": {
