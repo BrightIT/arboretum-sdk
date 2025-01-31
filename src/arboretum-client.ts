@@ -75,10 +75,7 @@ export type ArboretumClientConfigFromCdaT = {
     client: ContentfulClientApi;
     options: ArboretumClientContentfulConfigOptionsT;
   };
-  options?: Pick<
-    ArboretumClientOptions,
-    "data" | "eagerly" | "pageRelations"
-  >;
+  options?: Pick<ArboretumClientOptions, "data" | "eagerly" | "pageRelations">;
 };
 
 export type CreateClientParams = {
@@ -98,10 +95,7 @@ export type ArboretumClientConfigFromCdaParamsT = {
   contentful: Omit<CreateClientParams, "host"> & {
     options: ArboretumClientContentfulConfigOptionsT;
   };
-  options?: Pick<
-    ArboretumClientOptions,
-    "data" | "eagerly" | "pageRelations"
-  >;
+  options?: Pick<ArboretumClientOptions, "data" | "eagerly" | "pageRelations">;
 };
 
 export type ArboretumClientConfigT =
@@ -111,6 +105,7 @@ export type ArboretumClientConfigT =
 
 type ArboretumPageBaseT = {
   id: string;
+  contentTypeId: string;
   localeCode: string;
   path: string;
   title?: string;
@@ -130,7 +125,6 @@ export type ArboretumAliasT = ArboretumPageBaseT & {
 
 export type ArboretumPageT = ArboretumPageBaseT & {
   type: "page";
-  contentTypeId: string;
   slug: string;
   totalDirectChildrenCount: number;
   children?: Array<ArboretumPageNodeT>;

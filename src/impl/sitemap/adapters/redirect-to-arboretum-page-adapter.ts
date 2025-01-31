@@ -6,10 +6,11 @@ export const redirectToArboretumPage =
   (redirect: RedirectT): ArboretumRedirectT | ArboretumAliasT => ({
     type: redirect.type,
     id: redirect.sys.id,
+    contentTypeId: redirect.sys.contentTypeId,
     localeCode,
     pageId: redirect.page.sys.id,
     path: redirect.path,
     cmaOnlyStatus: redirect.sys.cmaOnlyStatus,
     title: redirect.title,
-    metadata: redirect.metadata
+    metadata: redirect.metadata,
   });

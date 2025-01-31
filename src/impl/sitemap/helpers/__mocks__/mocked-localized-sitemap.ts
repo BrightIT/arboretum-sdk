@@ -14,6 +14,8 @@ const mockedPage2SysId = "page2";
 const mockedPage2_1SysId = "page2_1";
 const mockedPage3SysId = "page3";
 
+const mockedRedirectContentTypeId = "redirect";
+
 const mockedRedirect1SysId = "redirect1";
 const mockedRedirect2SysId = "redirect2";
 const mockedRedirect3SysId = "redirect3";
@@ -116,7 +118,7 @@ export const mockedPage3: PageT = {
 
 const mockedRedirect1: RedirectT = {
   type: "alias",
-  sys: { id: mockedRedirect1SysId },
+  sys: { id: mockedRedirect1SysId, contentTypeId: mockedRedirectContentTypeId },
   page: { sys: { id: mockedRedirect1SysId } },
   path: mockedRoot.path + "/" + mockedRedirect1SysId,
   parent: { sys: { id: mockedRoot.sys.id } },
@@ -124,7 +126,7 @@ const mockedRedirect1: RedirectT = {
 
 const mockedRedirect2: RedirectT = {
   type: "redirect",
-  sys: { id: mockedRedirect2SysId },
+  sys: { id: mockedRedirect2SysId, contentTypeId: mockedRedirectContentTypeId },
   page: { sys: { id: mockedRedirect2SysId } },
   path: mockedRoot.path + "/" + mockedRedirect2SysId,
   parent: { sys: { id: mockedRoot.sys.id } },
@@ -132,7 +134,7 @@ const mockedRedirect2: RedirectT = {
 
 const mockedRedirect3: RedirectT = {
   type: "alias",
-  sys: { id: mockedRedirect3SysId },
+  sys: { id: mockedRedirect3SysId, contentTypeId: mockedRedirectContentTypeId },
   page: { sys: { id: mockedRedirect3SysId } },
   path: mockedRoot.path + "/" + mockedRedirect3SysId,
   parent: { sys: { id: mockedRoot.sys.id } },

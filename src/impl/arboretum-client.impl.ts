@@ -56,6 +56,7 @@ export type RedirectT = {
   sys: {
     id: string;
     cmaOnlyStatus?: StatusT;
+    contentTypeId: string;
   };
   parent: { sys: { id: string } };
   metadata?: MetadataT;
