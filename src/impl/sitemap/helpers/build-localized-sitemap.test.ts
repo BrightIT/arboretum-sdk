@@ -217,6 +217,121 @@ describe(buildLocalizedSitemap, () => {
     );
   });
 
+  test("Redirect select fields are exposed as additionalFields", () => {
+    const pageHomeTagId: ArboretumClientCtx["pageHomeTagId"] = "pagHome";
+    const redirectNoteFieldId = "note";
+
+    const contentTypesWithNoteField = new Map(contentTypes);
+    const redirectContentTypeDef = contentTypes.get(redirectContentTypeId)!;
+    contentTypesWithNoteField.set(redirectContentTypeId, {
+      sys: redirectContentTypeDef.sys,
+      fields: new Map([
+        ...redirectContentTypeDef.fields,
+        [
+          redirectNoteFieldId,
+          {
+            id: redirectNoteFieldId,
+            localized: true,
+            name: "Note",
+            type: "Symbol",
+          },
+        ],
+      ]),
+    });
+
+    const optionsWithSelect: ArboretumClientCtx["options"] = {
+      ...options,
+      redirectContentType: {
+        ...options.redirectContentType!,
+        select: [redirectNoteFieldId, "nonExistentField"],
+      },
+    };
+
+    const pagesEntries = mockedPages.flatMap((page) =>
+      page.type === "page"
+        ? [pageToEntry(page, page.sys.id === "root" ? [pageHomeTagId] : [])]
+        : []
+    );
+
+    const redirectsEntries = mockedPages.flatMap((page) =>
+      page.type !== "page"
+        ? [
+            {
+              ...redirectToEntry(page),
+              fields: {
+                ...redirectToEntry(page).fields,
+                [redirectNoteFieldId]: {
+                  [defaultLocale.code]: `note-${page.sys.id}`,
+                },
+              },
+            },
+          ]
+        : []
+    );
+
+    const data: Pick<
+      ArboretumClientCtx["data"],
+      | "homePagesByTagId"
+      | "pages"
+      | "contentTypes"
+      | "defaultLocaleCode"
+      | "locales"
+      | "redirects"
+    > = {
+      contentTypes: contentTypesWithNoteField,
+      defaultLocaleCode: defaultLocale.code,
+      locales: new Map([[defaultLocale.code, defaultLocale]]),
+      homePagesByTagId: new Map([
+        [
+          defaultLocale.code,
+          new Map([[pageHomeTagId, [{ sys: { id: mockedRoot.sys.id } }]]]),
+        ],
+      ]),
+      pages: new Map(pagesEntries.map((e) => [e.sys.id, e])),
+      redirects: redirectsEntries,
+    };
+
+    const sitemapE = buildLocalizedSitemap(
+      data,
+      optionsWithSelect,
+      pageHomeTagId,
+      defaultLocale
+    );
+
+    expect(sitemapE._tag).toBe("Right");
+    if (sitemapE._tag === "Right") {
+      const redirects = [...sitemapE.right.sitemap.values()].filter(
+        (p): p is RedirectT => p.type === "redirect" || p.type === "alias"
+      );
+      expect(redirects.length).toBeGreaterThan(0);
+      redirects.forEach((redirect) => {
+        expect(redirect.additionalFields).toEqual({
+          [redirectNoteFieldId]: `note-${redirect.sys.id}`,
+          nonExistentField: undefined,
+        });
+      });
+    }
+
+    /* Backward compatibility: without "select", additionalFields stays undefined */
+    const sitemapWithoutSelectE = buildLocalizedSitemap(
+      data,
+      options,
+      pageHomeTagId,
+      defaultLocale
+    );
+
+    expect(sitemapWithoutSelectE._tag).toBe("Right");
+    if (sitemapWithoutSelectE._tag === "Right") {
+      const redirects = [...sitemapWithoutSelectE.right.sitemap.values()].filter(
+        (p): p is RedirectT => p.type === "redirect" || p.type === "alias"
+      );
+      expect(redirects.length).toBeGreaterThan(0);
+      redirects.forEach((redirect) => {
+        expect(redirect.additionalFields).toBeUndefined();
+      });
+    }
+  });
+
   test("Handle reference cycles", () => {
     const pageHomeTagId: ArboretumClientCtx["pageHomeTagId"] = "pagHome";
 

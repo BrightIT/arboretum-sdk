@@ -23,6 +23,7 @@ const getAllRedirectEntriesRecursively = async (
     redirectContentType.pageFieldId,
     redirectContentType.typeFieldId,
     redirectContentType.pathFieldId,
+    ...(redirectContentType.select || []),
   ].flatMap((id) => (id ? [`fields.${id}`] : []));
 
   return getAllEntriesRecursively(
@@ -31,28 +32,7 @@ const getAllRedirectEntriesRecursively = async (
     redirectContentType.id,
     skip,
     acc,
-    /* For some reason select param causes errors in CMA. I'm getting the following response: 
-  {
-    "status": 400,
-    "statusText": "Bad Request",
-    "message": "The query you sent was invalid. Probably a filter or ordering specification is not applicable to the type of a field.",
-    "details": {
-      "errors": [
-        {
-          "name": "select",
-          "details": "Select is only applicable when querying a collection of entities."
-        }
-      ]
-    },
-    "request": {
-      "url": "/spaces/8h4rcnu50txt/environments/dacjan-test/public/entries",
-      "method": "get",
-      ...
-    },
-}*/
-    select || ctx.contentfulClientType === "cma-client"
-      ? undefined
-      : ["sys", "metadata", ...fieldsSelect].join(","),
+    select ?? ["sys", "metadata", ...fieldsSelect].join(","),
     [redirectContentType.pageFieldId]
   );
 };
