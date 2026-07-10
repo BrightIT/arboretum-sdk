@@ -46,6 +46,7 @@ const getAllRedirects = (
       pageField && pathField && typeField
         ? redirectEntryAdapter(
             data,
+            options,
             pageField,
             pathField,
             typeField,

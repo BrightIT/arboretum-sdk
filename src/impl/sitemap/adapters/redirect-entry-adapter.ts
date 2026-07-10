@@ -1,4 +1,4 @@
-import { PageT, RedirectT } from "../../arboretum-client.impl";
+import { ArboretumClientCtx, PageT, RedirectT } from "../../arboretum-client.impl";
 import {
   ContentTypeT,
   EntryT,
@@ -8,7 +8,8 @@ import { SitemapDataT } from "../../data/sitemap-data";
 import { localizeField } from "../helpers/localize-contentful-field";
 
 export const redirectEntryAdapter = (
-  data: Pick<SitemapDataT, "locales" | "defaultLocaleCode">,
+  data: Pick<SitemapDataT, "locales" | "defaultLocaleCode" | "contentTypes">,
+  options: NonNullable<ArboretumClientCtx["options"]["redirectContentType"]>,
   pageField: ContentTypeT["fields"][number],
   pathField: ContentTypeT["fields"][number],
   typeField: ContentTypeT["fields"][number],
@@ -36,6 +37,25 @@ export const redirectEntryAdapter = (
     : undefined;
   const pageSysId = page?.sys?.id;
 
+  const contentTypeId = entry.sys.contentType.sys.id;
+
+  /* Only set when "select" is configured so that redirects built from configs
+     without it keep their previous shape */
+  const additionalFields = options.select
+    ? options.select.reduce((acc, fieldId) => {
+        const contentType = data.contentTypes.get(contentTypeId);
+        if (contentType) {
+          const field = contentType.fields.get(fieldId);
+          const value = field
+            ? fieldValue(field.localized, entry.fields[field.id])
+            : undefined;
+          acc[fieldId] = value;
+        }
+
+        return acc;
+      }, {} as { [key: string]: any })
+    : undefined;
+
   return pageSysId && path && (type === "redirect" || type === "alias")
     ? {
         page: { sys: { id: pageSysId } },
@@ -47,8 +67,9 @@ export const redirectEntryAdapter = (
         sys: {
           id: entry.sys.id,
           cmaOnlyStatus: entry.sys.cmaOnlyStatus,
-          contentTypeId: entry.sys.contentType.sys.id,
+          contentTypeId,
         },
+        additionalFields,
       }
     : undefined;
 };

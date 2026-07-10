@@ -64,6 +64,7 @@ export type RedirectT = {
   title?: string;
   type: "redirect" | "alias";
   page: { sys: { id: string } };
+  additionalFields?: { [key: string]: any };
 };
 export type RedirectIdT = RedirectT["sys"]["id"];
 export type RedirectPathT = RedirectT["path"];

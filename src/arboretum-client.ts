@@ -31,6 +31,7 @@ export type ArboretumClientContentfulConfigOptionsT = {
     pageFieldId: string;
     pathFieldId: string;
     typeFieldId: string;
+    select?: Array<string>;
   };
   homePageTagId?: string;
 };
@@ -116,11 +117,13 @@ type ArboretumPageBaseT = {
 export type ArboretumRedirectT = ArboretumPageBaseT & {
   type: "redirect";
   pageId: string;
+  additionalFields?: { [key: string]: any };
 };
 
 export type ArboretumAliasT = ArboretumPageBaseT & {
   type: "alias";
   pageId: string;
+  additionalFields?: { [key: string]: any };
 };
 
 export type ArboretumPageT = ArboretumPageBaseT & {

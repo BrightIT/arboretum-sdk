@@ -156,6 +156,7 @@ In this step all data required to calculate sitemap is fetched and stored in int
 | titleFieldId      |         | Id of the field that represents the page title. This field should be of type `Symbol`.                                                                                                          |
 | slugFieldId       |         | **Required**. Id of the field that represents the page slug that should match the following regexp `^((\/)\|(([\/\w\-\._~:!$&'\(\)*+,;@]\|(%\d+))+))$`. This field should be of type  `Symbol`. |
 | childPagesFieldId |         | Id of the field that represents the references to child pages. This field should be of type `Array` and include references to other entries that were configured as pages.                      |
+| select            |         | Array of additional field ids that should be fetched and exposed on pages via `additionalFields`.                                                                                               |
 ### Contentful redirect content type configuration
 | Name         | Default | Description                                                                                                                                                                         |
 |--------------|---------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -164,6 +165,7 @@ In this step all data required to calculate sitemap is fetched and stored in int
 | typeFieldId  |         | **Required**. Id of the field that represents the redirect type (should be either `alias` or `redirect`). This field should be of type `Symbol`.                                    |
 | pageFieldId  |         | **Required**. Id of the field that represents the page reference. This field should be of type `Link` and accept references only to entries that were configured as pages.          |
 | pathFieldId  |         | **Required**. Id of the field that represents the redirect path that should match the following regexp `\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?$`. This field should be of type `Symbol`. |
+| select       |         | Array of additional field ids that should be fetched and exposed on redirects/aliases via `additionalFields`.                                                                        |
 
 # Basic usage
 
